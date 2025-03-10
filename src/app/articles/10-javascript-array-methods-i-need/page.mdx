@@ -1,0 +1,243 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import Image from 'next/image'
+import arrayMethods from './array-methods.png'
+
+export const article = {
+  author: 'Igor Katsuba',
+  date: '2021-04-09',
+  title: '10 Useful JavaScript Array Methods',
+  description:
+    'ECMAScript 5 includes many utilitarian methods for working with arrays to JavaScript',
+}
+
+export const metadata = {
+  title: article.title,
+  description: article.description,
+}
+
+export default (props) => <ArticleLayout article={article} {...props} />
+
+<Image src={arrayMethods} alt="Array Methods" />
+
+ECMAScript 5 includes many utilitarian methods for working with arrays to JavaScript:
+
+- `Array.isArray()`
+- `Array.prototype.every()`
+- `Array.prototype.filter()`
+- `Array.prototype.forEach()`
+- `Array.prototype.indexOf()`
+- `Array.prototype.lastIndexOf()`
+- `Array.prototype.map()`
+- `Array.prototype.reduce()`
+- `Array.prototype.some()`
+
+The next standards added find, findIndex, flat, flatMap, fill, etc. But it still seems to me that this is not enough. In this article, I discuss what methods I am missing when working with arrays.
+
+---
+
+## 1\. The first and last Getters
+
+One of the most common use cases is to get the first and last value of an array.
+
+`Array.prototype.first` is a getter that returns the first element of an array. If the array is empty, then the getter will return `undefined`.
+
+```typescript
+const items = [1, 2, 3, 4]
+//before
+const first = items[0]
+//after
+const first = items.first
+```
+
+The code is no better. You can comfortably code without the `first` getter. But to get the last element of the array, we definitely need to know its length. The `last` getter will free us from this dependency.
+
+`Array.prototype.last` is a getter that returns the last element of the array. If the array is empty, then the getter will return `undefined`.
+
+```typescript
+const items = [1, 2, 3, 4]
+//before
+const last = items[items.length - 1]
+//after
+const last = items.last
+```
+
+There is an example of using `last` and `first` together with destructuring
+
+```typescript
+const items = [1, 2, 3, 4]
+//before
+const last = items[items.length - 1]
+const first = items[0]
+//after
+const { first, last } = items
+```
+
+---
+
+## 2\. Array.prototype.clear()
+
+There are many ways to clear an array in JavaScript. By [this link](https://stackoverflow.com/questions/1232040/how-do-i-empty-an-array-in-javascript), you can read about 4 of them with explanations about performance.
+
+For example:
+
+```typescript
+const items = [1, 2, 3, 4]
+items.splice(0, items.length)
+//or
+while (items.length > 0) {
+  items.pop()
+}
+```
+
+The code looks unreadable. It’s not even clear what the developer wants to achieve.
+
+I present to your attention `Array.prototype.clear` — a method that clears an array.
+
+```typescript
+const items = [1, 2, 3, 4]
+items.clear()
+console.log(items)
+```
+
+The code is clean, short, and readable.
+
+---
+
+## 3\. Array.prototype.get(index)
+
+I don't like the way to get an element from an array by index. I want to use the `get` method for this. I have no particular reason why the `get` method is better than the classic square brackets, but I like it better.
+
+`Array.prototype.get` is a method that returns an array item by index.
+
+```typescript
+const items = [1, 2, 3, 4]
+//before
+const two = items[1]
+const three = items[2]
+//after
+const two = items.get(1)
+const three = items.get(2)
+```
+
+---
+
+## 4\. Array.prototype.insert(index, …elements)
+
+There are three methods to insert an element into an array:
+
+1\. `push` to insert at the end of the array,
+
+2\. `unshift` to insert at the beginning
+
+3\. `splice` to insert elements from a specific position.
+
+Everything is clear with push and unshift. But with `splice` everything is a little more interesting. This method can both remove elements and insert them. I would apply a different method for each operation. And the first one is to insert.
+
+`Array.prototype.insert` is a method that can insert elements into an array starting from the specified index.
+
+```typescript
+const items = [1, 2, 3, 4]
+//before
+items.splice(1, 0, 3)
+console.log(items)
+//after
+items.insert(1, 3)
+console.log(items)
+```
+
+---
+
+## 5\. Array.prototype.delete(item)
+
+To remove an item from an array, we first need to get its index and then delete it.
+
+`Array.prototype.delete` is a method that can delete items without an index
+
+```typescript
+const items = [1, 2, 3, 4]
+//before
+const index = items.indexOf(item)
+items.splice(index, 1)
+//after
+items.delete(item)
+```
+
+---
+
+## 6\. Array.prototype.deleteAt(index)
+
+`Array.prototype.deleteAt` is a method that deletes an array item by its index.
+
+```typescript
+const items = [1, 2, 3, 4]
+//before
+items.splice(index, 1)
+//after
+items.deleteAt(index)
+```
+
+---
+
+## 7\. Array.prototype.deleteWhere((item, index) ⇒ boolean)
+
+`Array.prototype.deleteWhere` is a method that removes all array elements that pass the test implemented by the provided function. The function will be called for each of the elements. If the function returns `true`, then the element will be removed.
+
+```typescript
+const items = [1, 2, 3, 4]
+//before
+const itemsForDelete = items.filter((item) => item % 2 === 0)
+itemsForDelete.forEach((item) => {
+  const index = items.indexOf(item)
+  items.splice(index, 1)
+})
+//after
+items.deleteWhere((item) => item % 2 === 0)
+```
+
+`deleteWhere` works like the`filter` method, but with one important difference: `deleteWhere` mutates the original array.
+
+---
+
+## 8\. Array.prototype.findLast((item, index) ⇒ boolean)
+
+`Array.prototype.findLast` is a method that returns the last element of the array that passes the condition.
+
+```typescript
+const items = [1, 2, 3, 4]
+//before
+const item = items.reverse().find(fn) // the reverse method mutates the array
+//after
+const item = items.findLast(fn)
+```
+
+---
+
+## 9\. Array.prototype.findLastIndex((item, index) ⇒ boolean)
+
+`Array.prototype.findLastIndex` is a method that returns the last index of an element that passes the condition.
+
+```typescript
+const items = [1, 2, 3, 4]
+//before
+const index = items.reverse().findIndex(fn) // the reverse method mutates the array
+//after
+const index = items.findLastIndex(fn)
+```
+
+---
+
+## 10\. Array.prototype.shuffle()
+
+`Array.prototype.shuffle` is a method that shuffles an array in place and returns it.
+
+```typescript
+const items = [1, 2, 3, 4]
+//before
+items.sort(() => Math.random() - 0.5)
+//after
+items.shuffle()
+```
+
+## Conclusion
+
+I have listed my top methods, the lack of which I feel most often. Perhaps some of them will appear in the next versions of the ECMAScript standard. What methods for working with collections in JavaScript are you missing?

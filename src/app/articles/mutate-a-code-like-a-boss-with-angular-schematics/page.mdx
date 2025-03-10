@@ -1,0 +1,347 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import mainImage from './main.png'
+import Image from 'next/image'
+
+export const article = {
+  author: 'Igor Katsuba',
+  date: '2021-12-28',
+  title: 'Mutate a code like a boss — with Angular schematics',
+  description:
+    'For fulfilling using Angular CLI, developers have to know about Angular schematics. `ng add`, `ng update` and `ng generate` use schematics to add, update and configure libraries and generate code for applications. At runtime, you get access to a virtual file system and can mutate source code as you need. “But for code mutation, I have to work with AST. It is so hard.” — say you. And you are right!',
+}
+
+export const metadata = {
+  title: article.title,
+  description: article.description,
+}
+
+export default (props) => <ArticleLayout article={article} {...props} />
+
+<Image src={mainImage} alt="Main" />
+
+For fulfilling using Angular CLI, developers have to know about Angular schematics. `ng add`, `ng update` and `ng generate` use schematics to add, update and configure libraries and generate code for applications. At runtime, you get access to a virtual file system and can mutate source code as you need. “But for code mutation, I have to work with AST. It is so hard.” — say you. And you are right!
+
+This article tells you how we are trying to do work with schematics easily and how to work with AST outside schematics in any project.
+
+## What is a schematic?
+
+Technically, the schematic is a function with two arguments:
+
+1.  Schematic configuration
+2.  Context. Used it for logging. Contains some utils.
+
+The schematic function returns type Rule. Let’s look at this type:
+
+```typescript
+type Rule = (
+  tree: Tree,
+  context: SchematicContext,
+) => Tree | Observable<Tree> | Rule | Promise<void | Rule> | void
+```
+
+`Rule` can be synchronous or asynchronous. As a bonus, `Rule` can return `Observable`.
+
+The last unknown type here is `Tree`. `Tree` is an abstraction for working with the virtual file system. Any changes in the virtual file system apply to the real file system.
+
+Each Angular CLI command working with schematics has its configuration, but in the end, it is just calling the above function.
+
+## Why do we use schematics?
+
+We use schematics a lot, and we have reasons:
+
+1.  Migrations. We use migrations when releasing libraries with breaking changes. Migrations help developers make updates softer. Angular CLI uses migrations with the ng update command. We even [contributed to RenovateBot](https://github.com/renovatebot/renovate/pull/7632) to run migrations automatically when the dependencies are updated.
+2.  Library configuration when added to a project. Schematics allow preparation immediately for the project for using the library (add imports to the module, inject default configs, change build process, etc.).
+3.  Code generation (easy and quick creation of component, directive, library, service, etc). For example, schematics can create a lazy route with all the needed configurations.
+
+I can write a large list of cases for each item, but let’s leave it to your imagination.
+
+As a result, we can say that writing schematics is a good time saver for users, but…
+
+## We have a problem
+
+We had a simple task to add the module import to AppModule. After development, we realized that we had spent much more time than expected.
+
+What was the problem? We decided to use AST for code mutation. But AST is not a simple thing for developers who are just working with Angular services and components.
+
+For example, the Angular team uses the typescript API for migrations. How often do you face using typescript programmatically? How often do you operate the nodes from the TS compiler to add a couple of properties to the object?
+
+Below is a simple example of a function that adds data to the module metadata ([original code](https://github.com/angular/components/blob/f4a54d64cc6bbb8557e72fc5f2ec7e9a88714ce2/src/cdk/schematics/utils/vendored-ast-utils/index.ts#L336)). _**CAUTION**_: _the code is given as an example. I do not advise you to strain yourself and understand what is happening in it!_
+
+```typescript
+export function addSymbolToNgModuleMetadata(
+  source: ts.SourceFile,
+  ngModulePath: string,
+  metadataField: string,
+  symbolName: string,
+  importPath: string | null = null,
+): Change[] {
+  const nodes = getDecoratorMetadata(source, 'NgModule', '@angular/core')
+  let node: any = nodes[0] // tslint:disable-line:no-any
+
+  // Find the decorator declaration.
+  if (!node) {
+    return []
+  }
+
+  // Get all the children property assignment of object literals.
+  const matchingProperties = getMetadataField(
+    node as ts.ObjectLiteralExpression,
+    metadataField,
+  )
+
+  // Get the last node of the array literal.
+  if (!matchingProperties) {
+    return []
+  }
+  if (matchingProperties.length == 0) {
+    // We haven't found the field in the metadata declaration. Insert a new field.
+    const expr = node as ts.ObjectLiteralExpression
+    let position: number
+    let toInsert: string
+    if (expr.properties.length == 0) {
+      position = expr.getEnd() - 1
+      toInsert = `  ${metadataField}: [${symbolName}]\\n`
+    } else {
+      node = expr.properties[expr.properties.length - 1]
+      position = node.getEnd()
+      // Get the indentation of the last element, if any.
+      const text = node.getFullText(source)
+      const matches = text.match(/^\\r?\\n\\s*/)
+      if (matches && matches.length > 0) {
+        toInsert = `,${matches[0]}${metadataField}: [${symbolName}]`
+      } else {
+        toInsert = `, ${metadataField}: [${symbolName}]`
+      }
+    }
+    if (importPath !== null) {
+      return [
+        new InsertChange(ngModulePath, position, toInsert),
+        insertImport(
+          source,
+          ngModulePath,
+          symbolName.replace(/\\..*$/, ''),
+          importPath,
+        ),
+      ]
+    } else {
+      return [new InsertChange(ngModulePath, position, toInsert)]
+    }
+  }
+  const assignment = matchingProperties[0] as ts.PropertyAssignment
+
+  // If it's not an array, nothing we can do really.
+  if (assignment.initializer.kind !== ts.SyntaxKind.ArrayLiteralExpression) {
+    return []
+  }
+
+  const arrLiteral = assignment.initializer as ts.ArrayLiteralExpression
+  if (arrLiteral.elements.length == 0) {
+    // Forward the property.
+    node = arrLiteral
+  } else {
+    node = arrLiteral.elements
+  }
+
+  if (!node) {
+    // tslint:disable-next-line: no-console
+    console.error(
+      'No app module found. Please add your new class to your component.',
+    )
+
+    return []
+  }
+
+  if (Array.isArray(node)) {
+    const nodeArray = node as {} as Array<ts.Node>
+    const symbolsArray = nodeArray.map((node) => node.getText())
+    if (symbolsArray.includes(symbolName)) {
+      return []
+    }
+
+    node = node[node.length - 1]
+  }
+
+  let toInsert: string
+  let position = node.getEnd()
+  if (node.kind == ts.SyntaxKind.ObjectLiteralExpression) {
+    // We haven't found the field in the metadata declaration. Insert a new
+    // field.
+    const expr = node as ts.ObjectLiteralExpression
+    if (expr.properties.length == 0) {
+      position = expr.getEnd() - 1
+      toInsert = `  ${symbolName}\\n`
+    } else {
+      // Get the indentation of the last element, if any.
+      const text = node.getFullText(source)
+      if (text.match(/^\\r?\\r?\\n/)) {
+        toInsert = `,${text.match(/^\\r?\\n\\s*/)[0]}${symbolName}`
+      } else {
+        toInsert = `, ${symbolName}`
+      }
+    }
+  } else if (node.kind == ts.SyntaxKind.ArrayLiteralExpression) {
+    // We found the field but it's empty. Insert it just before the `]`.
+    position--
+    toInsert = `${symbolName}`
+  } else {
+    // Get the indentation of the last element, if any.
+    const text = node.getFullText(source)
+    if (text.match(/^\\r?\\n/)) {
+      toInsert = `,${text.match(/^\\r?\\n(\\r?)\\s*/)[0]}${symbolName}`
+    } else {
+      toInsert = `, ${symbolName}`
+    }
+  }
+  if (importPath !== null) {
+    return [
+      new InsertChange(ngModulePath, position, toInsert),
+      insertImport(
+        source,
+        ngModulePath,
+        symbolName.replace(/\\..*$/, ''),
+        importPath,
+      ),
+    ]
+  }
+
+  return [new InsertChange(ngModulePath, position, toInsert)]
+}
+```
+
+Looks difficult.
+
+Complexity is the main reason for creating a high-level library that allows you to mutate your code easier!
+
+## ng-morph
+
+It has [ts-morph](https://ts-morph.com/) under the hood and allows you to manipulate with safe TypeScript AST.
+
+ng-morph is a set of utilities that will allow you to write schematics much easier and faster. Let’s look at a few examples of using it.
+
+## Example #1
+
+Add import of the SomeModule module to the root module of the application.
+
+### **Solution**.
+
+```typescript
+const rule: Rule = (tree: Tree, context: SchematicContext): void => {
+  setActiveProject(createProject(tree))
+
+  const appModule = getMainModule('src/main.ts')
+
+  addImportToNgModule(appModule, 'SomeModule')
+
+  addImports(appModule.getFilePath(), {
+    moduleSpecifier: '@some/package',
+    namedExports: ['SomeModule'],
+  })
+
+  saveActiveProject()
+}
+```
+
+Let’s look at the solution line by line:
+
+1.  Create the ng-morph project and set it active. It is important because all of the functions work in the context of the active project. Project is a class with access to a file system, the TS compiler, etc.
+2.  Find the main application module by entry point.
+3.  Add a new import to the main module.
+4.  Add a new import to the file of the main module.
+5.  Save the project.
+
+Now compare this solution with the function above from the Angular sources. If you use ng-morph, you probably won’t have to write something like this.
+
+## Example #2
+
+We should rewrite enum names to uppercase.
+
+### Solution
+
+Common questions: “Why should we use schematics for this? The schematics are too complex to rename enums”.
+
+You are right. But let’s look at ng-morph power!
+
+```typescript
+setActiveProject(createProject(new NgMorphTree('/')))
+
+const enums = getEnums('/**/*.ts')
+
+editEnums(enums, ({ name }) => ({ name: name.toUpperCase() }))
+```
+
+1.  Create a project. There is an important moment. The script is not wrapped by a schematic function, and Tree is created manually with NgMorphTree.
+2.  Find all enums.
+3.  Rename all enums.
+
+This example shows us that ng-morph can work outside of schematics! And yes, we use ng-morph in non-Angular projects!
+
+## What else can ng-morph do?
+
+- Create
+
+```typescript
+createImports('/src/some.ts', [
+  {
+    namedImports: ['CoreModule'],
+    moduleSpecifier: '@org/core',
+    isTypeOnly: true,
+  },
+])
+```
+
+- Find
+
+```typescript
+const imports = getImports('src/**/*.ts', {
+  moduleSpecifier: '@org/*',
+})
+```
+
+- Edit
+
+```typescript
+editImports(imports, ({moduleSpecifier}) => ({
+  moduleSpecifier: moduleSpecifier.replace('@org', '@new-org')
+})
+```
+
+- Remove
+
+```typescript
+removeImports(imports)
+```
+
+Almost every entity in TS has its own set of functions (`get*`, `edit*`, `add*`, `remove*`). For example `getClass`, `removeConstrucor`, `addDecorator`. We started to develop utility functions for working with Angular-specific cases:
+
+1.  `getBootstrapFn` is a function that returns `CallExpression`
+2.  `getMainModule` is a function that returns the main module declaration.
+3.  Many utility functions for changing the metadata of Angular entities: `addDeclarationToNgModule`, `addProviderToDirective`, etc.
+
+`ng-morph` can work with `json`. For example, you can add dependencies in `package.json`:
+
+```typescript
+addPackageJsonDependency(tree, {
+  name: '@package/name',
+  version: '~2.0.0',
+  type: NodeDependencyType.Dev,
+})
+```
+
+If you need lower-level work, you can always work with the ts-morph API and fall even lower into the typescript API.
+
+## Summary
+
+There is no roadmap at this time. We quickly implemented what we were missing and decided to show it to the community. We want to develop the instrument further.
+
+Nevertheless, there is still a list of essential features:
+
+1.  High-level work with templates
+2.  High-level work with styles
+3.  Increasing tooling for working with Angular entities
+
+And we’ll be glad if the Angular community can help us do this!
+
+## Links
+
+1. [GitHub - taiga-family/ng-morph: Code mutations in schematics were never easier than now.](https://github.com/taiga-family/ng-morph)
+2. [Documentation and examples](https://taiga-family.github.io/ng-morph/getting-started)

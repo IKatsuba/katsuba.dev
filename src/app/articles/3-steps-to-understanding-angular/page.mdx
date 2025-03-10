@@ -1,0 +1,89 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import Image from 'next/image'
+import ngMan from './ng-man.png'
+
+export const article = {
+  author: 'Igor Katsuba',
+  date: '2021-03-25',
+  title: '3 steps to understanding Angular',
+  description:
+    'Angular is a big and complicated framework. Like any complex tool, you can’t learn it for 2 days. You have to work hard and practice for several years to begin to feel comfortable using it.',
+}
+
+export const metadata = {
+  title: article.title,
+  description: article.description,
+}
+
+export default (props) => <ArticleLayout article={article} {...props} />
+
+<Image src={ngMan} alt="NgMan" />
+
+Angular is a big and complicated framework. Like any complex tool, you can’t learn it for 2 days. You have to work hard and practice for several years to begin to feel comfortable using it.
+
+I have identified 3 main steps that let me understand Angular.
+
+---
+
+## Stage 1. 🧑‍💻 NgMan Begins.
+
+The first stage began for me when I created an Angular project the first time. It was a payment page and a result page. I generated the project with `ng new` and learned [tutorials](https://angular.io/tutorial) from the official documentation. I have supported and developed this app for one year.
+
+Here’s what I’ve learned this year:
+
+1.  Learned to use [directives](https://angular.io/guide/attribute-directives), [components](https://angular.io/guide/architecture-components), and [modules](https://angular.io/guide/architecture-modules) correctly.
+2.  Researched a [base routing configuration](https://angular.io/guide/router), including [lazy routing](https://angular.io/guide/lazy-loading-ngmodules).
+3.  Learned to use [template-driven](https://angular.io/guide/forms) and [reactive](https://angular.io/guide/reactive-forms) forms.
+4.  Used built-in [pipes](https://angular.io/guide/pipes). Wrote new pipes myself.
+5.  Used [HttpClient](https://angular.io/guide/http) for messaging with a server and wrote interceptors.
+6.  Used base CLI features: build, serve, test, lint, new, generate
+7.  Learned to understand the `angular.json` format.
+8.  Used [external schematic collections](https://angular.io/guide/schematics-for-libraries) for code generation.
+9.  Learned the [injector hierarchy](https://angular.io/guide/hierarchical-dependency-injection). Used InjectionToken and providers (ClassProvider, ValueProvider, FactoryProvider). Read about resolution modifiers, but used only `Optional`.
+10. Learned the Change Detection strategies. Optimized performance with [ChangeDetectorRef](https://angular.io/api/core/ChangeDetectorRef)
+11. Read about [zone.js](https://angular.io/guide/zone). Learned how to run async tasks outside the Angular zone.
+
+I think I had the right start. I learned basic Angular features and builded the app for production! I was so happy and excited. This stage prepared me well for the next one.
+
+---
+
+## Stage 2. 🥷 CDK Ninja.
+
+After application development, I started to develop a proprietary library of reusable components using `@angular/cdk`.
+
+Result:
+
+1.  Created new [structure directives](https://angular.io/guide/structural-directives) myself.
+2.  Deep learned [lifecycle hooks](https://angular.io/guide/lifecycle-hooks) of components, directives, and services.
+3.  Learned `ng-packagr` and Angular Package Format.
+4.  Learned how to write schematics for code generation.
+5.  Wrote [simple migrations](https://angular.io/guide/schematics#update-schematics).
+6.  Learned and used all [providers](https://angular.io/api/core/Provider#provider).
+7.  Used [tree-shakable providers and services](https://angular.io/guide/providers).
+8.  Used all DI resolution modifiers, including the `Host` decorator.
+9.  Learned the [inject](https://angular.io/api/core/inject) function and its using context.
+10. Learned a difference between providers and viewProviders.
+11. Started learning Angular source code.
+
+The development of the UI Kit boosted my understanding of all the processes in Angular. I was able to deep dive into the features of the framework like DI and Change Detection. The third stage opened the last part unknown to me.
+
+---
+
+## Stage 3. 🅰️ Angular FrontOps
+
+A year ago, I was invited to an interview at [Tinkoff.ru](http://tinkoff.ru/). The guys painted everything so colorfully that I accepted a job offer. I started working in the platform team. It was the start of Stage 3.
+
+Result:
+
+1.  Learn to write CLI builders and webpack plugins.
+2.  Started to write hard migrations. Created a high-level library for source code mutations.
+3.  Learned to extend and create platforms for Angular running.
+4.  Created a framework for microfrontends (WIP)
+5.  Learned to customize `ng-packagr` and write typescript transformers.
+6.  Learned [Angular Universal](https://angular.io/guide/universal).
+
+This stage is not finished yet, but it showed me Angular from the other side. Usually, developers don’t customize or extend Angular CLI. They use standard platforms. But I have learned to solve problems and tasks in different ways.
+
+## Summary
+
+I very shortly talked about the stages that I went through when learning Angular. Each stage opened many new framework features for me, but I cannot say that I know everything about it even now. And I hope this is just the beginning!

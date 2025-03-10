@@ -1,0 +1,160 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import Image from 'next/image'
+import pageImage from './page.png'
+import buttonImage from './button.png'
+
+export const article = {
+  author: 'Igor Katsuba',
+  date: '2023-08-25',
+  title: 'Creating a Great Button in Angular',
+  description:
+    'In Angular, numerous libraries provide ready-made components for rapid UI development. However, every company, especially those with a public presence, wants a distinctive design with appealing buttons, beautiful date and time input fields, and more. Developers are always up for this task because building a component library presents a challenge and an opportunity to delve deep into the framework.',
+}
+
+export const metadata = {
+  title: article.title,
+  description: article.description,
+}
+
+export default (props) => <ArticleLayout article={article} {...props} />
+
+<Image src={pageImage} alt="Page" />
+
+In Angular, numerous libraries provide ready-made components for rapid UI development. However, every company, especially those with a public presence, wants a distinctive design with appealing buttons, beautiful date and time input fields, and more. Developers are always up for this task because building a component library presents a challenge and an opportunity to delve deep into the framework.
+
+This article will define what makes a good button and attempt to implement one using all the available Angular features.
+
+## What is a Good Button?
+
+Defining a good button is relatively straightforward. A good button meets the required criteria. Where do we get these criteria? The simplest way is to observe what a native button can do.
+
+<Image src={buttonImage} alt="Button" />
+
+1.  The button should have states: hovered, focused, pressed.
+2.  The button can contain images, text, and anything else.
+3.  The button should be accessible.
+4.  The button should support all native attributes (type, form, disabled, etc.)
+
+This is a fundamental set of requirements for a button, but when creating a button using Angular, developers often need to catch up on some of these requirements. I suggest considering these requirements, but let’s start with the last one.
+
+## Supporting Native Button Attributes
+
+When tackling such tasks, developers often think about creating inputs that essentially duplicate the list of possible attributes for the native button. Let’s see how this might look:
+
+```typescript
+@Component({
+  selector: 'my-button',
+  template: `
+    <button [type]="type" [form]="form" ...>
+      <ng-content></ng-content>
+    </button>
+  `,
+})
+export class MyButtonComponent {
+  @Input()
+  type: string
+
+  @Input()
+  form: string
+
+  // other attributes
+}
+```
+
+In the above example, only two attributes are mentioned. Native buttons have many more, and supporting each new attribute requires changes in the code. With each new attribute, there’s a desire to have access to the button to set any attribute without changing the code. Here’s where the component’s selector comes to the rescue.
+
+The selector is aptly named. We know that a directive can be attached using an attribute selector. Components can do that, too!
+
+In the selector, instead of `my-button`, we should use `[myButton]`. Then, the button component will attach to any node with the `myButton` attribute. It is even better if we restrict attachments only to buttons. Our selector should look like this: `button[myButton]`.
+
+Let’s look at the modified component:
+
+```typescript
+@Component({
+  selector: 'button[myButton]',
+  template: '<ng-content></ng-content>',
+})
+export class MyButtonComponent {}
+```
+
+And how it would look in the template:
+
+```html
+<button myButton type="submit">Submit</button>
+```
+
+With this approach, any specified attribute on the button doesn’t need to be proxied through the component, as we’re setting them directly on the button itself.
+
+Requirement 4 is considered fulfilled. Requirement 2 is also partially addressed. Requirement 3 is partially fulfilled; we explicitly have all the advantages of a native button, and it will be delighted after Requirement 1 is met. So, let’s focus on that.
+
+## Hovered, Focused, Pressed States
+
+Displaying the button’s hovered, focused, and pressed states is achieved using CSS pseudo-classes `:hover`, `:focus-visible`, and `:active`. These classes must be applied directly to the button. In our case, the button will serve as the host for the component. Angular provides us with the `:host` pseudo-class for this purpose. `:host` is part of the standard for styling hosts in the Shadow DOM. Angular abstracts this API and uses it for encapsulation in any form.
+
+Let’s add `:host` to the component:
+
+```typescript
+@Component({
+  selector: 'button[myButton]',
+  template: '<ng-content></ng-content>',
+  styles: [
+    `
+      :host:hover {
+        /* styles for hovered state */
+      }
+
+      :host:focus-visible {
+        /* styles for focused state */
+      }
+
+      :host:active {
+        /* styles for pressed state */
+      }
+    `,
+  ],
+})
+export class MyButtonComponent {}
+```
+
+## Bonus Requirement
+
+We’ve covered all the requirements for the button component, and it seems challenging to develop something else here.
+
+However, in design exploration, we understand that sometimes a button should behave like a link, with requirements identical to those of the button component. I’ve seen developers start inventing essential components and reusable styles in such cases. But the solution is much simpler.
+
+The `selector` field allows listing multiple selectors separated by commas. This suits our purpose perfectly! We must add the `a[myButton]` selector to the existing one.
+
+The final code would look like this:
+
+```typescript
+@Component({
+  selector: 'button[myButton],a[myButton]',
+  template: '<ng-content></ng-content>',
+  styles: [
+    `
+      :host:hover {
+        /* styles for hovered state */
+      }
+
+      :host:focus-visible {
+        /* styles for focused state */
+      }
+
+      :host:active {
+        /* styles for pressed state */
+      }
+    `,
+  ],
+})
+export class MyButtonComponent {}
+```
+
+Please note that when using a complex selector, you’ll need to override the base styles initially and then style them according to your preferences. This imposes some inconvenience, but this solution outperforms supporting at least two different components.
+
+If you use Tailwind, you probably know that Tailwind, by default, makes buttons and links look the same. You only need to add your styles and enjoy.
+
+## Is That All?
+
+Of course not. This article discussed creating a primary button in Angular that meets fundamental requirements and supports styles for various states. However, real projects involve many other aspects that should be considered: design and animation, testing, documentation, responsiveness, dark theme support, and much more. Everything depends on your project’s requirements and business goals.
+
+Creating suitable components is a process that requires attention to detail, a creative approach, and a user-centric focus. Remember that your goal is to create a pleasant, user-friendly, and effective user experience, and Angular components can help you achieve that goal

@@ -1,0 +1,48 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import Image from 'next/image'
+import mainImage from './main.png'
+
+export const article = {
+  author: 'Igor Katsuba',
+  date: '2024-02-13',
+  title: 'Micro-frontend Architecture',
+  description:
+    'Discover the power of microfrontend architecture in CRM systems for seamless scalability and rapid feature integration',
+}
+
+export const metadata = {
+  title: article.title,
+  description: article.description,
+}
+
+export default (props) => <ArticleLayout article={article} {...props} />
+
+<Image src={mainImage} alt="Main" />
+
+**Announcement! A series of posts on the secrets of developing an application with a micro-frontend architecture**
+
+I’ll lift the veil on the mystery and delve into how we’re developing one of the biggest web applications at PLATA.
+
+Get ready for a series of posts that will cover:
+
+- **Architecture Overview.** This is an introduction to the application’s structure and overall design. I’ll show how micro-frontends are integrated into the overall ecosystem and how this contributes to better modularity and separation of responsibilities.
+- **Technical Stack.** A deep (but not too deep) dive into the technologies that underpin the application. We’ll explore how the choice of frameworks, libraries, and tools affects the development and support of the micro-frontend architecture.
+- **State Management and Communication.** We’ll investigate how the application manages the state and ensures effective communication between micro-frontends.
+- **Challenges and Solutions.** I’ll share real challenges faced by the development team and the solutions applied to overcome them.
+- **Security and Performance.** Highlighting key aspects of security and performance optimization.
+- **Best Practices.** I hope to share in each post about the best practices drawn from experience working on the application, with advice on applying technologies and micro-frontends in your projects.
+
+Join me, and don’t miss out!
+
+---
+
+#### ✨ All parts together! ✨
+
+No worries, here are the links to the all installments in our series:
+
+1. [Micro-frontend Architecture. Part 1.](./micro-frontend-architecture-part-1)
+2. [Micro-frontend Architecture. Part 2.](./micro-frontend-architecture-part-2)
+3. [Micro-frontend Architecture. Part 3.](./micro-frontend-architecture-part-3)
+4. [Micro-frontend Architecture. Part 4.](./micro-frontend-architecture-part-4)
+
+🔗 Be sure to catch up to get a comprehensive understanding of micro-frontend architecture and how we are integrating it into our systems. Stay tuned for more insights and in-depth discussions! 🚀

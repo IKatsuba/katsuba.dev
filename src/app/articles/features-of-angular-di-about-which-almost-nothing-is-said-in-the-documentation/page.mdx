@@ -1,0 +1,334 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import Image from 'next/image'
+import injectImage from './inject.png'
+import memeImage from './meme.png'
+
+export const article = {
+  author: 'Igor Katsuba',
+  date: '2020-10-14',
+  title:
+    'Features of Angular DI, about which (almost) nothing is said in the documentation',
+  description:
+    'Angular is a reasonably large framework. It is merely impossible to document and write use cases for each case. And dependency injection is no exception. In this article, I will talk about Angular DI’s capabilities that you almost won’t find in the official documentation.',
+}
+
+export const metadata = {
+  title: article.title,
+  description: article.description,
+}
+
+export default (props) => <ArticleLayout article={article} {...props} />
+
+<Image src={injectImage} alt="Inject" />
+
+Angular is a reasonably large framework. It is merely impossible to document and write use cases for each case. And dependency injection is no exception. In this article, I will talk about Angular DI’s capabilities that you almost won’t find in the official documentation.
+
+## What do you know about the inject function?
+
+The documentation tells us:
+
+> Injects a token from the currently active injector. Must be used in the context of a factory function such as one defined for an InjectionToken. Throws an error if not called from such a context.
+
+And then, we see the use of the _inject_ function in the example with the tree shakable token.
+
+```typescript
+class MyService {
+  constructor(read-only myDep: MyDep) {}
+}
+
+const MY_SERVICE_TOKEN = new InjectionToken<MyService>('Manually constructed MyService', {
+  providedIn: 'root',
+  factory: () => new MyService(inject(MyDep)),
+});
+```
+
+That’s all the documentation tells us.
+
+The description of the function is a bit vague, and it is not completely clear in which context inject can be used. Therefore, I conducted a simple experiment and found out that the function works excellent:
+
+1.  In factories of tree shakable providers
+2.  In provider factories
+3.  In service constructors
+4.  In module constructors
+
+```typescript
+import { Injectable, inject } from '@angular/core'
+import { HelloService } from './hello.service'
+
+@Injectable({ providedIn: 'root' })
+export class AppService {
+  private helloService = inject(HelloService)
+
+  constructor() {
+    this.helloService.say('Meow')
+  }
+}
+```
+
+Since the factory function _InjectionToken_ cannot have arguments, _inject_ is the only way to get data from the injector. But why do we need this function in services if you can just specify the necessary dependencies directly in the constructor’s parameters?
+
+Let’s look at a small example.
+
+Let’s say we have an abstract _Storage_ class that depends on the _Logger_ class.
+
+```typescript
+@Injectable()
+abstract class Storage {
+  constructor(private logger: Logger) {}
+}
+```
+
+Any other class that implements the _Storage_ class must provide it with its dependency manually. If there are a lot of dependencies, this can be very frustrating.
+
+```typescript
+@Injectable()
+class LocalStorage extends Storage {
+  constructor(
+    logger: Logger,
+    private selfDependency: SelfDepService,
+  ) {
+    super(logger)
+  }
+}
+```
+
+There are two ways out of the situation — pass an injector to the parent class, from which all necessary dependencies will be extracted, or simply use the inject function! This will save the child classes from proxying unnecessary dependencies.
+
+```typescript
+@Injectable()
+abstract class Storage {
+  private logger = inject(Logger)
+}
+
+@Injectable()
+class LocalStorage extends Storage {
+  constructor(private selfDependency: SelfDepService) {
+    super()
+  }
+}
+```
+
+Profit!
+
+## Setting the context for the inject function manually
+
+Let’s go back to [the source code](https://github.com/angular/angular/blob/10.0.x/packages/core/src/di/injector_compatibility.ts). We are interested in the private variable [\_currentInjector](https://github.com/angular/angular/blob/10.0.x/packages/core/src/di/injector_compatibility.ts#L56), the [setCurrentInjector](https://github.com/angular/angular/blob/10.0.x/packages/core/src/di/injector_compatibility.ts#L58) function, and the [inject](https://github.com/angular/angular/blob/10.0.x/packages/core/src/di/injector_compatibility.ts#L168) function itself
+
+If you look closely, the work of the inject function becomes quite apparent:
+
+- the call of the _setCurrentInjector_ function assigns the passed injector to the private variable _\_currentInjector_, returning the previous one.
+- the _inject_ function gets the value from _\_currentInjector_ according to the passed token
+
+It’s so simple that we can easily make the inject function work even in components and directives.
+
+```typescript
+import {
+  Component,
+  Injector,
+  Injectable,
+  Directive,
+  INJECTOR,
+  Inject,
+} from '@angular/core'
+import {
+  inject,
+  ɵsetCurrentInjector as setCurrentInjector,
+} from '@angular/core'
+import { HelloService } from './hello.service'
+
+@Component({
+  selector: 'my-app',
+  template: '',
+})
+export class AppComponent {
+  constructor(injector: Injector) {
+    try {
+      const former = setCurrentInjector(injector)
+
+      const service = inject(HelloService)
+
+      setCurrentInjector(former)
+      service.say('AppComponent')
+    } catch (e) {
+      console.error('Error from AppComponent: ', e)
+    }
+  }
+}
+```
+
+It looks completely unused. And using private Angular functions is not a best practice either. Therefore, I do not advise you to do such things.
+
+<Image src={memeImage} alt="Meme" />
+
+## Injection flags
+
+[InjectFlags](https://angular.io/api/core/InjectFlags) is analogous to the [Optional](https://angular.io/api/core/Optional), [Self](https://angular.io/api/core/Self), [SkipSelf](https://angular.io/api/core/SkipSelf), and [Host](https://angular.io/api/core/Host) modifiers. Used in _inject_ and _Injector.get_. The documentation did not fail here, either. It is almost nonexistent.
+
+```typescript
+enum InjectFlags {
+  Default = 0,
+  Host = 1,
+  Self = 2,
+  SkipSelf = 4,
+  Optional = 8,
+}
+```
+
+A person who knows will immediately see [bit masks](https://en.wikipedia.org/wiki/Mask_%28computing%29) here. The same enum can be presented in a slightly different form.
+
+```typescript
+enum InjectFlags {
+  Default = 0b0000,
+  Host = 0b0001,
+  Self = 0b0010,
+  SkipSelf = 0b0100,
+  Optional = 0b1000,
+}
+```
+
+Let me show you how to use it.
+
+### Using one flag
+
+This is how you can get a stream of router events without worrying that the routing module is not connected.
+
+```typescript
+export const ROUTER_EVENTS = new InjectionToken('Router events', {
+  providedIn: 'root',
+  factory() {
+    const router = inject(Router, InjectFlags.Optional)
+    return router?.events ?? EMPTY
+  },
+})
+```
+
+It looks simple. It is also safe, without unexpected falls and unnecessary events.
+
+### Combination of flags
+
+A combination of flags can be used to check that a module has been imported once. And they are combined using bitwise OR.
+
+```typescript
+@NgModule()
+class SomeModule {
+  constructor() {
+    const parent = inject(
+      SomeModule,
+      InjectFlags.Optional | InjectFlags.SkipSelf,
+    )
+
+    if (parent) {
+      throw new Error('SomeModule is already exist!')
+    }
+  }
+}
+```
+
+The value of the desired bit is obtained using a bitwise AND:
+
+```typescript
+const flags = InjectFlags.Optional | InjectFlags.SkipSelf
+const isOptional = !!(flags & InjectFlags.Optional)
+```
+
+## Tree shakable services and \*SansProviders
+
+_\*SansProviders — shorthand for base interfaces of common providers_ [_ValueSansProvider_](https://github.com/angular/angular/blob/b1682526ddcbde922d07b07d82727366ddf5bf00/goldens/public-api/core/core.d.ts#L979)_,_ [_ExistingSansProvider_](https://github.com/angular/angular/blob/b1682526ddcbde922d07b07d82727366ddf5bf00/goldens/public-api/core/core.d.ts#L329)_,_ [_StaticClassSansProvider_](https://github.com/angular/angular/blob/b1682526ddcbde922d07b07d82727366ddf5bf00/goldens/public-api/core/core.d.ts#L911)_,_ [_ConstructorSansProvider_](https://github.com/angular/angular/blob/b1682526ddcbde922d07b07d82727366ddf5bf00/goldens/public-api/core/core.d.ts#L155)_,_ [_FactorySansProvider_](https://github.com/angular/angular/blob/b1682526ddcbde922d07b07d82727366ddf5bf00/goldens/public-api/core/core.d.ts#L338)_,_ [_ClassSansProvider_](https://github.com/angular/angular/blob/b1682526ddcbde922d07b07d82727366ddf5bf00/goldens/public-api/core/core.d.ts#L84)
+
+Tree shakable services are a special way of telling the compiler that a service should not be included in an assembly if it is not used anywhere. In this case, the service is not indicated in the module, rather the opposite — the module is indicated in the service.
+
+```typescript
+import { Injectable } from '@angular/core'
+
+@Injectable({ providedIn: SomeModule })
+export class SomeService {}
+```
+
+As we can see from the example, the module is specified in the property _providedIn_. This works exactly like the following example.
+
+```typescript
+@NgModule({
+  providers: [SomeService],
+})
+export class SomeModule {}
+```
+
+_providedIn_ can also contain special values: _root_, _platform_, and _any_. This is described quite well in the documentation, but it does not say anything at all about the possibility of using factories (I found one small mention in one of the guides). But if we visit the sources, we will see that we can use factories and all existing providing methods — *useFactory*, _useValue_, _useExisting_, etc.
+
+The most useful way, in my opinion, to use a factory in tree shakable services looks like this
+
+```typescript
+import { Injectable, Optional } from '@angular/core'
+import { SharedModule } from './shared.module'
+
+@Injectable({
+  providedIn: SharedModule,
+  useFactory: (instance: SingletonService) =>
+    instance ?? new SingletonService(),
+  deps: [[new Optional(), SingletonService]],
+})
+export class SingletonService {
+  constructor() {
+    console.count('SingletonService constructed')
+  }
+}
+```
+
+The advantages of this service definition:
+
+1.  Accidental use of the service is excluded. To work with it, you need to import the service module.
+2.  The module itself does not need to allocate the static methods _forRoot_ and _forChild_
+3.  Guaranteed to create one instance of the service
+
+With other methods of definition, not everything is so obvious. I can imagine that this might help when using external libraries, which also lack typing.
+
+For example:
+
+```typescript
+@Injectable({
+  providedIn: 'root',
+  useValue: jQuery,
+})
+abstract class JqueryInstance {}
+```
+
+In this case, using the _JqueryInstance_ token, we will receive a _jQuery_ instance.
+
+For other types of providers, I suggest you come up with use cases yourself. I would be glad if you share them in the comments.
+
+## Component interaction
+
+[The documentation](https://angular.io/guide/component-interaction) lists all the existing ways of interaction between components and directives:
+
+1.  Input binding with a setter, ngOnChanges
+2.  Child events (outputs)
+3.  Template variables
+4.  View/parent queries
+5.  General service
+
+But not a word has been said about the fact that a child directive/component can quite easily receive a parent instance via DI.
+
+> UPD: found [the link to the documentation](https://angular.io/guide/dependency-injection-navtree) that describes this method.
+
+```typescript
+import { Component } from '@angular/core'
+
+@Component({
+  template: `
+    Count: {{ count }}
+    <ng-content></ng-content>
+  `,
+  selector: 'count-component',
+})
+export class CountComponent {
+  count: number = 0
+}
+```
+
+The example shows that the child directive gets an instance of the parent component, making it easier for them to interact. The directive can directly change the parent component’s value by processing a click on a host element. Any other way would be at least more verbose.
+
+But why is this possible? The answer can be huge and does not fit into the scope of this article. Someday I will write about this in more detail. In the meantime, I will suggest reading to you about [the hierarchy of injectors](https://angular.io/guide/hierarchical-dependency-injection) and [ElementInjector](https://indepth.dev/a-curious-case-of-the-host-decorator-and-element-injectors-in-angular/) (in that order).
+
+## Summary
+
+As I said, Angular is an extensive framework. And I’m sure there are many more exciting features in its source. I always share my findings on [Twitter](https://twitter.com/katsuba_igor). For example, you can find Angular tips under the hashtag #AngularTip. And the Russian translation of the most exciting tweets can be found on the #AngularTipRus hashtag! I will be glad if you share your observations and advice with the community and me. Thank you for your attention!

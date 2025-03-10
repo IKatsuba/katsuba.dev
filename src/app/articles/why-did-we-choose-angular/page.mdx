@@ -1,0 +1,221 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import mainImage from './main.png'
+import ngNewTerminalScreenshot from './ng-new-terminal-screenshot.png'
+import memeImage from './meme.png'
+import communityImage from './community.png'
+
+export const article = {
+  author: 'Igor Katsuba',
+  date: '2024-01-18',
+  title: 'Why did we choose Angular?',
+  description:
+    'A year ago, when PLATA was just born, we faced the first problem during a discussion about the web — what kind of frameworks we would like to use to build a new digital bank in Mexico. Of course, we had requirements for the framework. The time has come for modern and progressive SSR-first frameworks. We call them meta-frameworks. And the most significant part of them are not based on Angular. But why did we pick Angular?',
+}
+
+export const metadata = {
+  title: article.title,
+  description: article.description,
+}
+
+export default (props) => <ArticleLayout article={article} {...props} />
+
+<Image src={mainImage} alt="main" />
+
+A year ago, when PLATA was just born, we faced the first problem during a discussion about the web — what kind of frameworks we would like to use to build a new digital bank in Mexico. Of course, we had requirements for the framework. The time has come for modern and progressive SSR-first frameworks. We call them meta-frameworks. And the most significant part of them are not based on Angular. But why did we pick Angular? I'll get the answer for you.
+
+## What do we do?
+
+PLATA is a digital financial services and technology company. We want to be a big enterprise with countless services and applications using our design system, best practices, infrastructure solutions, and incredibly skilled teams.
+
+## What do we need?
+
+**Performance.** The framework must be productive and fast. In an ideal world, it has to have good numbers in [this benchmark](https://krausest.github.io/js-framework-benchmark/2023/table_chrome_120.0.6099.62.html).
+
+**Security.** The framework should include protection against common security threats to front-end applications.
+
+**Tooling and DX.** The framework should have a CLI (or something) to simplify development. Developers don't have to worry about building, linting, formatting, etc.
+
+**Compatibility and integration.** The framework should easily integrate with other systems and technologies used in the company.
+
+**Modularity and flexibility.** The framework should make it possible to create reusable libraries of different kinds with strict contracts and should have flexible architecture.
+
+**Documentation and learning.** The availability of good documentation and training resources facilitates faster technology adoption into development.
+
+**Supports many platforms and browsers.** The framework should be compatible with various browsers and devices.
+
+**SSR (Server Side Rendering).** The framework should be able to generate static or dynamic pages on the server side.
+
+**I18n.** The framework should support internationalization to create international applications.
+
+**Accessibility.** The framework should be able to make the application usable for people with disabilities.
+
+**Support and community.** The framework should be well supported. A big, active community around the framework gives us strict confidence that we can find and hire framework specialists.
+
+**Licensing.** Licensing terms must be acceptable to corporate policy.
+
+## Does Angular meet the requirements?
+
+Angular meets most of the requirements. Let's check each of them.
+
+---
+
+### Performance ✅
+
+```typescript
+@Component({
+  standalone: true,
+  selector: 'user-controls',
+  template: `
+    @if (isAdmin) {
+      <button>Erase database</button>
+    } @else {
+      <p>You are not authorized.</p>
+    }
+  `,
+})
+export class UserControls {
+  isAdmin = true;
+}
+```
+
+There is a common myth that Angular is a slow framework. And this can become true if you ignore training materials and best practices. In addition, the Angular team improves the framework's performance with each release, bringing us closer to the zoneless future.
+
+Key points to remember to make your application work quickly:
+
+1.  **OnPush as default.** Always use OnPush when creating new components. This will cut off unnecessary runs of the change detection mechanism. Sometimes, this improves the performance of the application significantly. In conjunction with signals from version 17 of the framework, OnPush includes local change detection, improving performance.
+2.  **Use `NgZone.runOutsideAngular`**. In the current version (17.0 at the time of writing), the trigger to launch the change detection mechanism is all asynchronous events that Zone.js can track. If you don't need a specific task to run CD, run it outside the Angular zone.
+3.  **Use Control Flow** instead of `*ngFor` and `*ngIf`. Referring to the same [benchmark](https://krausest.github.io/js-framework-benchmark/2023/table_chrome_120.0.6099.62.html), using CF, in some cases, improves performance by 9 times.
+4.  **Chunk-splitting and Lazy routing.** To ensure that the chunk that initiates the application is as tiny as possible, you can use approaches in which specific libraries and application routes are loaded lazily.
+
+Of course, this is not the entire list; even compliance will impact Angular's performance.
+
+Another point that must be made aware of. Angular does not use the Virtual DOM concept. Angular uses Incremental DOM. The template for each component is compiled into a set of instructions. The instructions create DOM trees or update them in place when data has changed. This approach is, in fact, not inferior to Virtual DOM and, in some aspects, even wins. You can read more about Incremental DOM in Victor Savkin's article ["Understanding Angular Ivy: Incremental DOM and Virtual DOM"](https://blog.nrwl.io/understanding-angular-ivy-incremental-dom-and-virtual-dom-243be844bf36).
+
+All this makes Angular relatively fast, despite all the myths circulating it. The requirement has been met.
+
+### Security ✅
+
+```typescript
+import {bootstrapApplication, CSP_NONCE} from '@angular/core';
+import {AppComponent} from './app/app.component';
+bootstrapApplication(AppComponent, {
+  providers: [{
+    provide: CSP_NONCE,
+    useValue: globalThis.myRandomNonceValue
+  }]
+});
+```
+
+Angular has built-in protection against common types of attacks:
+
+1.  **XSS.** Any value that must be applied to a template as a result of binding or interpolation is considered unsafe by Angular. Angular sanitizes and escapes dangerous values. Of course, there are tools to mark values as trusted, but they must be used consciously and only if other tools have verified them. Additionally, Angular provides the ability to protect against XSS using the Content Security Policy header.
+2.  **Template injection.** When using a JIT compiler, there is always a high risk of getting a vulnerability in the form of code injection through the compiler. The JIT compiler works directly in the browser runtime, and since Angular considers the template a trusted data source, the template is not sanitized or escaped. To avoid the risk of injection, you need to use an AOT compiler instead of a JIT.
+3.  **XSRF.** HttpClient supports protection against this type of attack out of the box. The protection mechanism is quite simple — when an HTTP request is made, the interceptor reads the token value from the cookie named `XSRF-TOKEN` and sends it with the request in the `X-XSRF-TOKEN` header. The server, in turn, must be able to install this token on the client, for example, with the first GET request and verify it in HTTP requests.
+4.  **XSSI.** There is a particular protection measure for JSON responses — adding a prefix that makes using the response in XSSI attacks impossible. HttpClient can recognize such responses and process them correctly.
+
+It's worth noting that Angular is part of Google's open-source vulnerability bounty program. Please report Angular vulnerabilities on [this](https://bughunters.google.com/report) page.
+
+All of the above completely covers our security requirements.
+
+### Tooling and DX ✅
+
+<Image src={ngNewTerminalScreenshot} alt="ng new terminal screenshot" />
+
+Angular has a powerful CLI designed to create and manage Angular applications. Many routine things can be done with its help:
+
+1.  **Generating and initializing a project.** Angular CLI allows you to create a project with a folder structure, minimal settings for launching a dev server, and a boxed production setup for assembly and testing in one command.
+2.  **Generating components** and other Angular entities into one command. The CLI will automatically configure and add the necessary files with the template and styles, configure the change detection strategy, inline the styles if necessary, make the directive standalone, etc.
+3.  **Production-ready build configuration.** The CLI allows you to build a production application in a newly created project with minification and AOT compilation enabled, including critical styles in `index.html` and many other settings.
+4.  **Dev server.** When generating a project, the `serve` task is configured, the launch of which allows you to launch a dev server for local development with the ability to design requests to other backends, page reloads when changing, incremental sorting, and even HMR.
+5.  **Testing.** Angular comes out of the box with the ability to write tests using Karma.
+6.  **Migrations.** When updating the framework to new versions, the CLI can run migrations, allowing you to automatically change the application code base without manually fixing anything. This mechanism is also available to developers of Angular libraries.
+
+Angular CLI allows us to abstract the intricacies of assembly configuration; we do not have to choose between webpack and esbuild in the early stages of development; we can also change testing utilities and even write our executors and extend the CLI.
+
+But if, in addition to this, you want to connect ESLint, formatting, and tools for e2e testing, then you can safely turn to Nx. Nx has first-class support for Angular projects, covers all the features of the Angular CLI, and provides even more out-of-the-box.
+
+Considering the company's internal needs, we chose [Nx](https://nx.dev/) and created our own CLI to generate new projects and plugins. With tuning and DX, the requirement should be fulfilled.
+
+### Compatibility and integration ✅
+
+Angular includes a basic HttpClient that allows you to access backends via HTTP. It is easy to adapt to REST, JSON REST, or any other approach involving client-northern interaction using HTTP. To support popular data formats like GraphQL, there are well-supported third-party solutions with Angular frameworks.
+
+Integration with other libraries can occur entirely transparently. You either habitually use libraries in Angular entities or choose the Angular-way approach, where you abstract new functionality for services/tokens/other APIs and work with it through a built-in dependency injection mechanism. This allows, for example, to quickly mock such APIs when writing unit tests.
+
+The requirement has been met.
+
+### Modularity and flexibility ✅
+
+Angular is a modular framework, even if the latest versions have allowed us to develop without using NgModule. In an application of any complexity, we can select components, directives, services, data tokens, and modules, package them into separate npm libraries using special tooling, and reuse them unlimited times.
+
+Angular has first-class TypeScript support. Suppose we add modularity and competent project architecture (for example, proposed by Nx). In that case, making changes to a large enterprise project with micro-fronts can be relatively easy. And if CI/CD practices are followed, it is impossible to break or deploy a broken project.
+
+The requirement has been met.
+
+### Documentation and learning ✅
+
+<Image src={memeImage} alt="meme" />
+
+"Angular has poor documentation" is a stereotype that once existed. As a young framework, Angular had many undocumented or poorly documented features. Everyone considered DI to be something beyond the bounds, and CD was considered by many to be a magic phrase. But these are all things of the past. The Angular team is constantly working to improve the documentation. Now, this is a significant and good source of knowledge.
+
+Along with the [official documentation](https://angular.io/), [Angular Docs Beta](https://angular.dev/) has appeared, where there are articles and guides and many interactive sandboxes in which you can try out how Angular works right in an open browser.
+
+But besides the official documentation, a massive amount of content is dedicated to Angular, from an introduction to advanced courses in many world languages. I recommend reading the Angular GDE (Google Developer Experts) first. They are Angular experts recognized by Google. Please take this as a sign of the quality of their content.
+
+### Supports many platforms and browsers ✅
+
+Angular supports most modern browsers, including the latest versions of Chrome, Firefox, Edge, Safari, iOS, and Android. Polyfills supports web platform standards in browsers that do not support all modern features. During continuous integration, Angular runs unit tests on all these browsers for every change request using [Sauce Labs](https://saucelabs.com/).
+
+This suits us quite well. The requirement has been met.
+
+### SSR 👀
+
+```typescript
+/**
+ * Returns whether a platform id represents a server platform.
+ * @publicApi
+ */
+export function isPlatformServer(platformId) {
+    return platformId === PLATFORM_SERVER_ID;
+}
+```
+
+The Angular Universal project was created to make it possible to work with SSR. The project enabled running an Angular application in a nodejs environment and delivering ready-made HTML to the client's browser. The project developed quite slowly and had several serious problems for a long time, which I reflected on in the article" [Angular Universal: Real App Problems"](https://medium.com/its-tinkoff/angular-universal-real-app-problems-b008b80396b4). Competitors (for example, numerous frameworks around React) have gone much further in this area. And some even began to call themselves SSR-first frameworks.
+
+Starting from version 17, the Angular Universal repository was merged into the Angular monorepo and became part of it. In the same version, the rehydration announced with the release of Angular 16 received the status' production ready'. Previously, when loading scripts onto a page, Angular cut out all the finished HTML and drew everything again. Additionally, setting up SSR when initializing projects has become more accessible, and support for the vite and esbuild tools has appeared, significantly improving DX.
+
+Our products need SSR in exceptional cases, so I don't want to nitpick at this point. There are still questions for SSR, but they are not so critical. Our requirements have been largely met.
+
+### I18n ✅
+
+Angular supports internationalization (i18n), which allows you to design and prepare projects for use in different world regions. Angular allows you to prepare texts for translation in template components and supports various local formats for dates, numbers, percentages, and currencies. The Angular CLI will generate a build with the correct texts and formats for each selected locale during the build. This means Angular does not know how to change the locale at runtime.
+
+Static localization imposes some restrictions, but we are happy with it overall. Plus, various solutions from the community allow you to do this in runtime. We believe that the requirement has been met.
+
+### Accessibility ✅
+
+Angular allows you to create accessible web applications using all [W3C principles](https://www.w3.org/WAI/people-use-web/); for example, it will enable it to set aria attributes and use native elements as hosts for components.
+
+In addition, Angular provides the `@angular/cdk` package, which includes many tools to enable the creation of accessible applications. All blanks for components (dialogues, menus, accordions) have correctly assigned roles and are fully accessible. `@angular/cdk/a11y` can control focus, keyboard navigation and some stylistic tricks. It is an excellent tool for creating accessible components and applications.
+
+### Licensing ✅
+
+Angular uses the MIT license, one of the most liberal and flexible in the open-source software world. This license allows you to use, copy, modify, merge, publish, distribute, sublicense, and sell copies of the software for both commercial and non-commercial purposes. The MIT license also minimizes restrictions on the use of the framework, making Angular attractive to a wide range of projects and organizations.
+
+### Support and community ✅
+
+<Image src={communityImage} alt="Photo by Hannah Busing on Unsplash" />
+
+Angular has significant support and popularity in the developer community. Angular has over 90 thousand stars on GitHub, demonstrating its widespread acceptance and use among developers. This number of stars indicates activity and interest in the framework in the professional community. In addition, a large number of forks (more than 25 thousand) indicates the community's active participation in the framework's development and adaptation. This data highlights the strong developer support and engagement in the Angular ecosystem. This includes official documentation, forums, social media groups, and conferences.
+
+It is important to note that Angular, having a strong community, is supported by Google.
+
+Such an active community and ongoing support from a large organization ensures regular updates, bug fixes, and new feature introductions, making Angular a reliable choice for enterprises. And, of course, this suits us too.
+
+## Summary
+
+In conclusion, choosing Angular for PLATA was not just a technical decision but a strategic move. Like a Swiss army knife in the front-end world, this framework provides a comprehensive set of tools and capabilities that open up enormous horizons for development and scaling.
+
+Angular meets all the essential PLATA requirements: performance to security and accessibility to international support. The strong community and support from Google are precious, providing reliability and confidence in the long-term use of the framework.
+
+Ultimately, Angular was an ideal choice for PLATA, providing a solid foundation for building an innovative digital bank ready to overcome future technology and market challenges.

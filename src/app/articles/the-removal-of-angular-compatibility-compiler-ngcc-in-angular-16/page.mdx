@@ -1,0 +1,50 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import Image from 'next/image'
+import ngccImage from './ngcc.png'
+import terminalImage from './terminal.png'
+export const article = {
+  author: 'Igor Katsuba',
+  date: '2023-05-16',
+  title: 'The Removal of Angular Compatibility Compiler (ngcc) in Angular 16',
+  description:
+    'The Angular Compatibility Compiler (`ngcc`) is a compiler designed to convert libraries compiled with the Angular Compiler (`ngc`) into a format compatible with Angular Ivy. Ivy is a rendering and compiling engine introduced in Angular 9.',
+}
+
+export const metadata = {
+  title: article.title,
+  description: article.description,
+}
+
+export default (props) => <ArticleLayout article={article} {...props} />
+
+<Image src={ngccImage} alt="ngcc" />
+
+Angular 16 was officially released on May 3, 2023, bringing with it several significant updates and improvements. One of the most substantial changes in this release was the removal of the Angular Compatibility Compiler (`ngcc`). This modification significantly impacts the process of working with Angular, making it even more user-friendly and efficient.
+
+## What is `ngcc`?
+
+<Image src={terminalImage} alt="terminal" />
+
+ngcc logs in an Angular 15 project
+
+The Angular Compatibility Compiler (`ngcc`) is a compiler designed to convert libraries compiled with the Angular Compiler (`ngc`) into a format compatible with Angular Ivy. Ivy is a rendering and compiling engine introduced in Angular 9.
+
+`ngcc` performs a post-processing transformation of npm packages located in `node_modules`. This transformation is needed to ensure Ivy compatibility if the library was compiled using the previous View Engine compiler.
+
+## Why was ngcc removed?
+
+The removal of `ngcc` is the last step forward in the transition to Ivy. Since the introduction of Ivy in Angular 9, Angular developers have actively encouraged the community and library authors to switch to Ivy. With the release of Angular 16, this process has become final, and now all libraries must be compatible with Ivy.
+
+The removal of `ngcc` simplifies the build process and reduces build time, as there is no need for additional code transformation. It also makes integration with other tools like Webpack easier and facilitates development and debugging, as there are no complexities associated with having two different library formats.
+
+## What does this mean for developers?
+
+For most developers, the removal of `ngcc` means that they need to ensure that all their dependencies are Ivy compatible. If you find that some of your dependencies have not yet been updated, you will have to contact the authors of the library or look for alternatives.
+
+However, the removal of `ngcc` is a significant step forward for Angular, making the framework even more modern and efficient. It means that Angular becomes even faster and lighter, leading to improved performance of your applications.
+
+Also, this change simplifies the development process. Without `ngcc`, your applications will compile and run faster, reducing the time spent waiting. In addition to this, the removal of ngcc simplifies the debugging process, as developers will now only have to deal with one library format.
+
+## Conclusion
+
+The removal of the Angular Compatibility Compiler (`ngcc`) in Angular 16 is an important step forward in improving the framework’s performance and efficiency. This update makes Angular even more modern and faster, leading to improved performance of your applications and facilitating the development process. For developers, this means the necessity to ensure that all their libraries and dependencies are compatible with Ivy, but overall, this change brings more benefits than inconveniences.

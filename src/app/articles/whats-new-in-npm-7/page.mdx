@@ -1,0 +1,159 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import npmImage from './npm.png'
+import terminalImage from './terminal.png'
+
+export const article = {
+  author: 'Igor Katsuba',
+  date: '2021-01-22',
+  title: 'What’s new in npm 7',
+  description:
+    'On October 13th, npm@7.0.0 was released. The release is experimental and available for download from the public npm registry with the next-7 tag. Also, npm 7 comes with node.js 15.',
+}
+
+export const metadata = {
+  title: article.title,
+  description: article.description,
+}
+
+export default (props) => <ArticleLayout article={article} {...props} />
+
+<Image src={npmImage} alt="npm" />
+
+On October 13th, [npm@7.0.0](https://github.com/npm/cli/releases/tag/v7.0.0) was released. The release is experimental and available for download from the public npm registry with the `next-7` tag. Also, npm 7 comes with node.js 15.
+
+As you remember, odd versions of node.js are also more likely to be unstable pre-releases. Only the even-numbered versions receive [LTS](https://nodejs.org/en/about/releases/) status and are recommended for use in production. But now, we will talk exclusively about npm, and to be more precise, we will talk about several highly anticipated features included in the fresh release.
+
+## 1\. Workspaces
+
+npm workspaces are the most anticipated feature of npm@7. Workspaces are positioned as a set of tools for managing multiple packages from one top-level, in other words, for managing a mono-repository ([proof](https://docs.npmjs.com/cli/v7/using-npm/workspaces#description)).
+
+These days mono-repositories are clearly in demand by the community, and this sounds very promising. But let’s figure out what set of tools the new npm provides.
+
+First, we need to add the `workspaces` property to `package.json` of the root package. It needs to list all the child packages in the repository:
+
+```json
+{
+  "name": "root-project",
+  "workspaces": ["workspace-a", "packages/*"]
+}
+```
+
+When you run the `npm install` command, symlinks will be added to the root `node_modules` for all packages from the workspace. It will also install the dependencies described in `package.json` of each child package and generate a new version of `package-lock.json` that supports the mono repository.
+
+It’s important to note that running the npm ci command will ignore the new property in `package.json` and only install what it finds in `package-lock.json`.
+
+And this is where the whole toolbox ends. npm can only resolve dependencies so far. For example, this is how the command for installing the `babel-core` module using `lerna` in the `awesome-package` package will look like:
+
+```
+lerna add babel-core --scope=awesome-package
+```
+
+To do the same with `npm`, you have to install the `babel-core` package in the `awesome-package` using the `--prefix` flag:
+
+```
+npm i babel-core --prefix=packages/awesome-package
+```
+
+This command will add the dependency to `package.json`, create `package-lock.json` and `node_modules` at the root of the package. But you need to understand that in this case, npm only knows about the package and dependencies from `packages/awesome-package/package.json` and definitely does not know anything about the workspace. For everything to fall into place, you will have to run the full installation of modules in the root of the project again with the `npm i` command.
+
+So `npm` will go through all the packages in the project and resolve the modules "correctly", considering the workspace settings. But this method is doomed to failure as soon as one of the project packages detects a dependency on another package from the same project. In this case, there is a risk of getting a similar error:
+
+<Image src={terminalImage} alt="terminal" />
+
+This error indicates that the `lib-a` package is missing from the npm registry. But this package only exists within the project. What if a package with that name is found in the registry? Then your project will not install the package you expected.
+
+But despite the paucity of tools, `npm workspaces` is a great starting point for creating a convenient CLI for working with mono repositories.
+
+## 2\. Automatically installed peerDependencies.
+
+Before npm@7, the user had to install `peerDependencies` himself, npm could throw a warning about the absence or incorrect versions of such dependencies.
+
+As the title suggests, in `npm@7`, when installing dependencies, `peerDependencies` will be resolved automatically. Also, npm will throw errors about the already installed library version and the version from `peerDependencies` and interrupt the installation process.
+
+These are serious breaking changes. Not in all cases will developers be able to resolve all version conflicts on the fly. Therefore, the developers have provided the `--legacy-peer-deps` flag, which disables the auto-set behavior.
+
+Automatic installation solves problems with the incorrect resolution of dependencies and is part of the “maximally naive deduplication” algorithm. You can read more about motivation [here](https://github.com/npm/rfcs/blob/latest/implemented/0025-install-peer-deps.md#motivation).
+
+## 3\. `yarn.lock` support
+
+**Given**: a project with `package.json` and `yarn.lock`.
+
+**Actions**: run `npm install` in the root of the project and see the following:
+
+1.  `yarn.lock` is still there.
+2.  `package-lock.json` is created.
+3.  `package.json` was left untouched.
+
+In fact, it worked the same in npm 6. So, what is the support for `yarn.lock`?
+
+At startup, npm does not find a native lock file for itself, but it does find `yarn.lock`. Of course, it reads it and, based on the information received, installs the dependencies and forms `package-lock.json`. Interestingly, after generating the `package-lock.json` file, npm no longer needs `yarn.lock`.
+
+The npm command seems to have confused the word “support” with the word “migration”. But migrating from yarn became safer.
+
+## 4\. The standalone npx is deprecated.
+
+Under the hood, npx will access `npm exec` and will not have its startup algorithm.
+
+#### `npm exec`, what is it?
+
+`npm exec` allows you to run an arbitrary command from a npm package (installed locally or extracted remotely) in a context similar to running via `npm run`.
+
+There is one big difference from earlier versions of npx: `npm exec` explicitly separates the arguments of the called utility and its own using `--`.
+
+For example:
+
+```
+npx foo@latest bar --package=@npmcli/foo
+```
+
+This would match the following command:
+
+```
+foo bar --package=@npmcli/foo
+```
+
+The `--package` flag was passed on because npx assumes that the positional argument is followed by the program's arguments. In case of using `npm exec`:
+
+```
+npm exec foo@latest bar --package=@npmcli/foo
+```
+
+This would match the following command:
+
+```
+foo@latest bar
+```
+
+To get an equivalent command, you need to run:
+
+```
+npm exec -- foo@latest bar --package=@npmcli/foo
+```
+
+And one more important difference from earlier versions of npx from a security point of view: if the package to be launched is not in the project dependencies, then npm will prompt you to run the command. This behavior can be prevented by using the `--yes` and `--no` flags.
+
+## 5\. Bonus feature from npm@7.1 — `npm set-script`.
+
+A small but nice feature from npm@7.1 `npm set-script` allows you to set commands in the scripts section of the `package.json` file.
+
+For example, using this feature, you can install a dependency without leaving the terminal, register its use in the scripts section and immediately run it via `npm run`:
+
+```
+npm init -y && npm install --save-dev http-server && npm set-script start "http-server ." && npm start
+```
+
+## Summary
+
+The long-awaited seventh version of npm turned out to be ambiguous.
+
+On the one hand — breaking changes to the `peerDependencies` setting, on the other — workspaces and safer npx. But this is exactly what developer preview releases are for.
+
+Hopefully, the npm team will listen to the community and develop a tool native to the ecosystem and convenient for everyone.
+
+### Useful Resources
+
+1.  [Workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspaces)
+2.  [Install Peer Dependencies](https://github.com/npm/rfcs/blob/latest/implemented/0025-install-peer-deps.md)
+3.  [Why keep package-lock.json?](https://blog.npmjs.org/post/621733939456933888/npm-v7-series-why-keep-package-lockjson)
+4.  [npm-exec](https://docs.npmjs.com/cli/v7/commands/npm-exec)
+5.  [npm set-script](https://github.com/npm/rfcs/blob/latest/accepted/0016-set-script-command.md)

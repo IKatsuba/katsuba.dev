@@ -1,0 +1,55 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import Image from 'next/image'
+import mainImage from './main.png'
+
+export const article = {
+  author: 'Igor Katsuba',
+  date: '2024-02-23',
+  title: 'Micro-frontend Architecture. Part 2.',
+  description:
+    'Discover the power of microfrontend architecture in CRM systems for seamless scalability and rapid feature integration',
+}
+
+export const metadata = {
+  title: article.title,
+  description: article.description,
+}
+
+export default (props) => <ArticleLayout article={article} {...props} />
+
+<Image src={mainImage} alt="Main" />
+
+We are continuing our adventure in the world of micro-frontends! Today, we'll discuss the tech stack we chose for our project. 🚀
+
+## Technology Choices 💡
+
+After thorough analysis and discussions, we decided on **Angular**, **Webpack**, and **Module Federation** for micro-frontends and **Nx** for repository management. Here's why:
+
+1.  **Angular** is a powerful framework offering ready-made solutions for many frontend development tasks. We use Angular to provide our application with a stable and tested foundation with rich functionality. I've detailed the main reasons for choosing Angular in the article "[Why did we choose Angular?](https://medium.com/plata-card/why-did-we-choose-angular-d5ec405e1b4f)" 🔄
+2.  **Webpack**. Sure, you might say Webpack is hopelessly outdated, and there are more modern tools supported by Angular, like _esbuild_. However, at this moment, this choice is motivated by the possibility of using Module Federation (see the next point). Of course, we are looking into Native Federation but do not plan to switch soon 🛠
+3.  **Module Federation** is a Webpack feature that allows micro-frontends to load each other dynamically and efficiently in real-time. It's a critical element that makes our architecture flexible and scalable. We use Module Federation not just for lazy loading routes but also for loading individual components and modules🌟
+4.  **Nx** is not just a repository management tool; it's a powerful system for organizing a monorepo and facilitating code separation, collaboration, and automation. With Nx, we simplify our micro-frontends' development, testing, and deployment, making processes more reliable and efficient. 🛠🔧
+
+Choosing these technologies is no coincidence. We aim to create a system that is not only scalable and easy to maintain but also capable of quickly adapting to new business requirements and easily integrating new features and capabilities. This tech stack provides us with all the necessary tools to achieve our goals. 🎯
+
+## Behind the Scenes of Technology Choice 🛠✨
+
+Continuing the discussion about our tech stack, I'd like to clarify some points regarding the choice of tools. _You may wonder why we didn't focus on selecting state management libraries or UI libraries in this part._ 🤔
+
+Our main priority at this stage is establishing a reliable architectural foundation for micro-frontends. Decisions on state management and UI are formed at later stages of development when the main architectural issues have already been resolved. While important, choosing specific libraries for state management or UI components is a more detailed question that requires separate consideration.
+
+## Summary 🌟
+
+The tech stack of our project is the foundation upon which the entire application is built. Angular, Webpack, Module Federation, and Nx are our faithful companions on this journey. Stay tuned to learn more about each tool and how we use them in upcoming posts! 🚀💡
+
+---
+
+## ✨ Missed my earlier articles? ✨
+
+No worries, here are the links to the other installments in our series:
+
+1. [Micro-frontend Architecture. Part 1.](./micro-frontend-architecture-part-1)
+2. [Micro-frontend Architecture. Part 3.](./micro-frontend-architecture-part-3)
+3. [Micro-frontend Architecture. Part 4.](./micro-frontend-architecture-part-4)
+
+🔗 Be sure to catch up to get a comprehensive understanding of micro-frontend architecture and how we are integrating it into our systems. Stay tuned for more insights and in-depth discussions! 🚀

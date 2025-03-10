@@ -1,0 +1,114 @@
+import { ArticleLayout } from '@/components/ArticleLayout'
+import Image from 'next/image'
+import mainImage from './main.png'
+import logosImage from './logos.png'
+
+export const article = {
+  author: 'Igor Katsuba',
+  date: '2024-04-17',
+  title: 'Saasfy — your modern SaaS template',
+  description:
+    'Saasfy is a modern SaaS template that helps you build your SaaS application faster and easier. It is a monorepo with many features for fast application building.',
+}
+
+export const metadata = {
+  title: article.title,
+  description: article.description,
+}
+
+export default (props) => <ArticleLayout article={article} {...props} />
+
+<Image src={mainImage} alt="Main" />
+
+Hey everyone! My name is Igor. I am a software engineer. For 10 years, I created a ton of small, big, private, and public SaaS for someone. But just now, I am starting to think about my own SaaS. I always had a lot of ideas. But what did I face? I quickly built core SaaS logic because of the power of interest, and I always got burned out when I had to create user authorization, payments, email sending, public API, teams, member invites, etc.
+
+What if I build the modern SaaS template once and will use it in all my SaaS ideas? That is why I am starting to develop the modern SaaS template — Saasfy!
+
+## What is Saasfy exactly?
+
+<Image src={logosImage} alt="Logos" />
+
+I have to say that Saasfy is just a repository on GitHub in the Saasfy organization. But this repository has many features for fast application building.
+
+1.  **Authorization and authentication** with Supabase
+    1.  Login with email, Google, GitHub, etc.
+    2.  Protected pages and API calls
+    3.  Account setting page (_WIP_)
+2.  **Payments** with Stripe
+    1.  Create plans and monthly/annual prices on the admin panel
+    2.  Create one-time payments (_WIP_)
+    3.  Create checkout session
+    4.  Handle webhooks to sync plans, prices, and subscription statuses
+    5.  Customer portal to manage subscriptions
+3.  **Emails** with Resend
+    1.  Beautiful emails built with React Email (_WIP_)
+    2.  Setup to avoid spam folder (_tutorial, WIP_)
+    3.  Subscribing to newsletters
+4.  **Full stack developing** with Next.js
+    1.  API routes
+    2.  SSR
+    3.  File-based routing
+    4.  I18n (_WIP_)
+    5.  ... and much more
+5.  **SEO** with Next.js
+    1.  Meta tags for Google Search
+    2.  OG tags for social media
+    3.  Sitemap and robots.txt (_WIP_)
+6.  **Database** with Supabase
+    1.  Fully support local development
+    2.  Postgres with many extensions
+    3.  Compatibility with edge runtime with access to database with REST
+7.  **UI Kit and themes** with shadcn/ui
+    1.  Many full-featured UI components
+    2.  Light/dark mode
+8.  **Modern tooling** with Nx
+    1.  Fast CI runs with Nx and Nx Cloud
+    2.  Unit tests with Jest
+    3.  E2E tests with Playwright
+    4.  Linting with ESLint
+    5.  Monorepo with Nx
+    6.  Publish local packages (_WIP_)
+9.  **Workspaces, aka teams, organizations,** anything where you want to bring collect users together.
+    1.  CRUD API for workspace managing
+    2.  Workspace member roles
+    3.  Billing settings
+    4.  Workspace setting (_WIP_)
+    5.  Plan limits (max users, max projects, max domains)
+    6.  Managing custom domains (_WIP_)
+    7.  Member invites (_WIP_)
+10. **Projects, aka blog posts, events, products,** or anything in your workspace
+11. CRUD API (_WIP_)
+12. Public access via custom domain (_WIP_)
+13. **4-in-1 application**
+14. Landing page with root domain (for example, saasfy.dev)
+15. Dashboard application with app domain prefix (for example, app.saasfy.dev)
+16. Admin dashboard (for example, admin.saasfy.dev)
+17. Custom domain for public projects (_WIP_)
+18. **Saasfy documentation** with Mintlify
+
+... and it has just started!
+
+## You can get access to Saasfy right now!
+
+There are two options to do this:
+
+- You can become my sponsor on [GitHub](https://github.com/sponsors/IKatsuba). Find a tier with "Lifetime access to the Saasfy mono repository" and buy any of them
+- You can find the direct prices on [saasfy.dev](https://saasfy.dev/#pricing)
+
+In both cases, you will get lifetime access to the Saasfy monorepo, with contributing and discussion opportunities. A higher subscription will also give you access to the roadmap and feature prioritization.
+
+## Why do you need Saasfy?
+
+In the competitive landscape of software development, speed is paramount. The ability to quickly transform a brilliant idea into a market-ready product can be the difference between success and obscurity. This is where Saasfy shines.
+
+By leveraging the power of Saasfy, you bypass the tedious and time-consuming aspects of SaaS development. You no longer need to spend weeks grappling with user authorization, payment gateways, or building intricate APIs. Saasfy provides you with a modern, comprehensive template that accelerates your development process exponentially.
+
+Imagine having the framework for your SaaS application ready in just a few days. With Saasfy, this becomes a reality. You can focus your energy on refining your idea, polishing your user experience, and crafting a compelling value proposition. You'll be ready to launch your product and generate revenue in no time.
+
+Saasfy isn't just a template; it's your ticket to success in the world of SaaS. Whether you're a seasoned developer with years of experience or a newcomer looking to make your mark, Saasfy empowers you to turn your dreams into reality.
+
+**So why wait? Unlock the potential of your next brilliant idea with Saasfy and start your journey towards SaaS success today.**
+
+## Saasfy
+
+[Get Access](https://saasfy.dev/#pricing)
