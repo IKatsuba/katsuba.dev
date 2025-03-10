@@ -35,7 +35,7 @@ export async function GET(req: Request) {
     .map((key) => key.slice(2).replace(/\/page\.mdx$/, ''))
 
   for (let id of articleIds) {
-    let url = String(new URL(`/articles/${id}`, req.url))
+    let url = String(new URL(`/articles/${id}`, siteUrl))
     let html = await (await fetch(url)).text()
     let $ = cheerio.load(html)
 
