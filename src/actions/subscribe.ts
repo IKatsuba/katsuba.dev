@@ -9,7 +9,6 @@ const formDataSchema = z.object({
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-
 export async function subscribe(formData: FormData) {
   const emailData = formData.get('email')
 
@@ -21,11 +20,11 @@ export async function subscribe(formData: FormData) {
     return { error: 'Invalid fields' }
   }
 
-  const { email } = validatedFields.data
+  const { email } = validatedFields.data;
 
   resend.contacts.create({
     email: email,
-    audienceId: '8b9d4734-4e25-46dc-bc7a-7c101e4cb1fd',
+    audienceId: process.env.RESEND_AUDIENCE_ID!,
   });
   
   redirect(`/thank-you`)
