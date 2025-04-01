@@ -18,11 +18,13 @@ const nextConfig = {
 
     const redirects = articleFilenames.map((filename) => {
       return {
-        source: `/${filename.replace('page.mdx', '')}`,
-        destination: `/articles/${filename.replace('page.mdx', '')}`,
+        source: `/${filename.replace('/page.mdx', '')}`,
+        destination: `/articles/${filename.replace('/page.mdx', '')}`,
         permanent: true,
       }
     })
+
+    console.log(redirects)
 
     return [
       ...redirects,
