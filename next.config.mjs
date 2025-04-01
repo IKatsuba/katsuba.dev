@@ -1,6 +1,7 @@
 import rehypePrism from '@mapbox/rehype-prism'
 import nextMDX from '@next/mdx'
 import remarkGfm from 'remark-gfm'
+import glob from 'fast-glob'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -9,6 +10,23 @@ const nextConfig = {
     outputFileTracingIncludes: {
       '/articles/*': ['./src/app/articles/**/*.mdx'],
     },
+  },
+  async redirects() {
+    const articleFilenames = await glob('*/page.mdx', {
+      cwd: './src/app/articles',
+    })
+
+    const redirects = articleFilenames.map((filename) => {
+      return {
+        source: `/${filename.replace('page.mdx', '')}`,
+        destination: `/articles/${filename.replace('page.mdx', '')}`,
+        permanent: true,
+      }
+    })
+
+    return [
+      ...redirects,
+    ]
   },
 }
 
