@@ -45,9 +45,14 @@ export async function GET(req: Request) {
     let date = article.find('time').first().attr('datetime')
     let content = article.find('[data-mdx-content]').first().html()
 
-    assert(typeof title === 'string')
-    assert(typeof date === 'string')
-    assert(typeof content === 'string')
+    try {
+      assert(typeof title === 'string')
+      assert(typeof date === 'string')
+      assert(typeof content === 'string')
+    } catch (error) {
+      console.error(`Error processing article ${id}:`, error)
+      continue
+    }
 
     feed.addItem({
       title,
