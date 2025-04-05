@@ -35,7 +35,7 @@ export default function RootLayout({
           </div>
         </Providers>
       </body>
-      <Script src="https://assets.onedollarstats.com/stonks.js"/>
+      <Script src="https://assets.onedollarstats.com/stonks.js" />
     </html>
   )
 }

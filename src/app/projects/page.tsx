@@ -40,8 +40,7 @@ const projects = [
   },
   {
     name: 'Revelio',
-    description:
-      'Revelio is a Telegram bot based on generative AI models.',
+    description: 'Revelio is a Telegram bot based on generative AI models.',
     link: { href: 'https://github.com/IKatsuba/revelio', label: 'github.com' },
     logo: logoRevelio,
   },

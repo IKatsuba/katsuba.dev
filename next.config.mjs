@@ -26,9 +26,7 @@ const nextConfig = {
 
     console.log(redirects)
 
-    return [
-      ...redirects,
-    ]
+    return [...redirects]
   },
 }
 

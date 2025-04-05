@@ -74,7 +74,7 @@ Angular meets most of the requirements. Let's check each of them.
   `,
 })
 export class UserControls {
-  isAdmin = true;
+  isAdmin = true
 }
 ```
 
@@ -96,14 +96,16 @@ All this makes Angular relatively fast, despite all the myths circulating it. Th
 ### Security ✅
 
 ```typescript
-import {bootstrapApplication, CSP_NONCE} from '@angular/core';
-import {AppComponent} from './app/app.component';
+import { bootstrapApplication, CSP_NONCE } from '@angular/core'
+import { AppComponent } from './app/app.component'
 bootstrapApplication(AppComponent, {
-  providers: [{
-    provide: CSP_NONCE,
-    useValue: globalThis.myRandomNonceValue
-  }]
-});
+  providers: [
+    {
+      provide: CSP_NONCE,
+      useValue: globalThis.myRandomNonceValue,
+    },
+  ],
+})
 ```
 
 Angular has built-in protection against common types of attacks:
@@ -176,7 +178,7 @@ This suits us quite well. The requirement has been met.
  * @publicApi
  */
 export function isPlatformServer(platformId) {
-    return platformId === PLATFORM_SERVER_ID;
+  return platformId === PLATFORM_SERVER_ID
 }
 ```
 
