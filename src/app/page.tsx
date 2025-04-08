@@ -23,6 +23,7 @@ import image5 from '@/images/photos/image-5.jpg'
 import { type ArticleWithSlug, getAllArticles } from '@/lib/articles'
 import { formatDate } from '@/lib/formatDate'
 import { subscribe } from '@/actions/subscribe'
+import { Booking } from '@/components/Booking'
 
 function MailIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   return (
@@ -285,7 +286,7 @@ export default async function Home() {
             Software Engineer, JS Enthusiast, Open Source Contributor
           </h1>
           <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            I’m Igor, a software engineer based in Limassol, Cyprus. I’m the
+            I&apos;m Igor, a software engineer based in Limassol, Cyprus. I&apos;m the
             biggest fan of JS and open source.
           </p>
           <div className="mt-6 flex gap-6">
@@ -312,7 +313,6 @@ export default async function Home() {
           </div>
         </div>
       </Container>
-      <Photos />
       <Container className="mt-24 md:mt-28">
         <div className="mx-auto grid max-w-xl grid-cols-1 gap-y-20 lg:max-w-none lg:grid-cols-2">
           <div className="flex flex-col gap-16">
@@ -326,6 +326,18 @@ export default async function Home() {
           </div>
         </div>
       </Container>
+      <Container className="mt-24 md:mt-28">
+          <div className="mx-auto max-w-5xl">
+            <h2 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
+              Book a consultation
+            </h2>
+            <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
+              Choose a service that best fits your needs. All consultations are conducted via video call.
+            </p>
+          </div>
+          <Booking />
+      </Container>
+      <Photos />
     </>
   )
 }
