@@ -278,6 +278,29 @@ function Photos() {
 export default async function Home() {
   let articles = (await getAllArticles()).slice(0, 4)
 
+  console.log(process.env.CAL_API_KEY);
+
+  const response = await fetch('https://api.cal.com/v2/event-types?username=katsuba', {
+    headers: {
+      'Authorization': `Bearer ${process.env.CAL_API_KEY}`,
+      'cal-api-version': '2024-06-14'
+    },
+    next: {
+      revalidate: 60 * 60 // 1 hour
+    }
+  })
+
+  const json = await response.json();
+
+
+  const services = json.data.map((eventType: any) => ({
+    title: eventType.title,
+    description: eventType.description,
+    duration: `${eventType.lengthInMinutes}m`,
+    price: `$${eventType.price / 100}`,
+    calLink: `https://cal.com/katsuba/${eventType.slug}`
+  }))
+
   return (
     <>
       <Container className="mt-9">
@@ -335,7 +358,7 @@ export default async function Home() {
               Choose a service that best fits your needs. All consultations are conducted via video call.
             </p>
           </div>
-          <Booking />
+          <Booking services={services} />
       </Container>
       <Photos />
     </>
