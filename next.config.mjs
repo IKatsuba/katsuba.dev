@@ -26,11 +26,24 @@ const nextConfig = {
 
     console.log(redirects)
 
-    return [...redirects, {
+    return [
+      ...redirects, 
+      {
       source: '/micro-frontend-architecture-part-3-layered-architecture',
       destination: '/articles/micro-frontend-architecture-part-3',
       permanent: true,
-    }]
+    },
+    {
+      source: '/micro-frontend-architechture-part-1',
+      destination: '/articles/micro-frontend-architecture-part-1',
+      permanent: true,
+    },
+    {
+      source: '/micro-frontend-architechture-part-2',
+      destination: '/articles/micro-frontend-architecture-part-2',
+      permanent: true,
+    },
+  ]
   },
 }
 
