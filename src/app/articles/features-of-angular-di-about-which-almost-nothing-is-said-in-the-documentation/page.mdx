@@ -1,7 +1,7 @@
-import { ArticleLayout } from '@/components/ArticleLayout'
-import Image from 'next/image'
-import injectImage from './inject.png'
-import memeImage from './meme.png'
+import { ArticleLayout } from '@/components/ArticleLayout';
+import Image from 'next/image';
+import injectImage from './inject.png';
+import memeImage from './meme.png';
 
 export const article = {
   author: 'Igor Katsuba',
@@ -10,14 +10,14 @@ export const article = {
     'Features of Angular DI, about which (almost) nothing is said in the documentation',
   description:
     'Angular is a reasonably large framework. It is merely impossible to document and write use cases for each case. And dependency injection is no exception. In this article, I will talk about Angular DI’s capabilities that you almost won’t find in the official documentation.',
-}
+};
 
 export const metadata = {
   title: article.title,
   description: article.description,
-}
+};
 
-export default (props) => <ArticleLayout article={article} {...props} />
+export default (props) => <ArticleLayout article={article} {...props} />;
 
 <Image src={injectImage} alt="Inject" />
 
@@ -52,15 +52,15 @@ The description of the function is a bit vague, and it is not completely clear i
 4.  In module constructors
 
 ```typescript
-import { Injectable, inject } from '@angular/core'
-import { HelloService } from './hello.service'
+import { Injectable, inject } from '@angular/core';
+import { HelloService } from './hello.service';
 
 @Injectable({ providedIn: 'root' })
 export class AppService {
-  private helloService = inject(HelloService)
+  private helloService = inject(HelloService);
 
   constructor() {
-    this.helloService.say('Meow')
+    this.helloService.say('Meow');
   }
 }
 ```
@@ -87,7 +87,7 @@ class LocalStorage extends Storage {
     logger: Logger,
     private selfDependency: SelfDepService,
   ) {
-    super(logger)
+    super(logger);
   }
 }
 ```
@@ -97,13 +97,13 @@ There are two ways out of the situation — pass an injector to the parent c
 ```typescript
 @Injectable()
 abstract class Storage {
-  private logger = inject(Logger)
+  private logger = inject(Logger);
 }
 
 @Injectable()
 class LocalStorage extends Storage {
   constructor(private selfDependency: SelfDepService) {
-    super()
+    super();
   }
 }
 ```
@@ -129,12 +129,12 @@ import {
   Directive,
   INJECTOR,
   Inject,
-} from '@angular/core'
+} from '@angular/core';
 import {
   inject,
   ɵsetCurrentInjector as setCurrentInjector,
-} from '@angular/core'
-import { HelloService } from './hello.service'
+} from '@angular/core';
+import { HelloService } from './hello.service';
 
 @Component({
   selector: 'my-app',
@@ -143,14 +143,14 @@ import { HelloService } from './hello.service'
 export class AppComponent {
   constructor(injector: Injector) {
     try {
-      const former = setCurrentInjector(injector)
+      const former = setCurrentInjector(injector);
 
-      const service = inject(HelloService)
+      const service = inject(HelloService);
 
-      setCurrentInjector(former)
-      service.say('AppComponent')
+      setCurrentInjector(former);
+      service.say('AppComponent');
     } catch (e) {
-      console.error('Error from AppComponent: ', e)
+      console.error('Error from AppComponent: ', e);
     }
   }
 }
@@ -196,10 +196,10 @@ This is how you can get a stream of router events without worrying that the rout
 export const ROUTER_EVENTS = new InjectionToken('Router events', {
   providedIn: 'root',
   factory() {
-    const router = inject(Router, InjectFlags.Optional)
-    return router?.events ?? EMPTY
+    const router = inject(Router, InjectFlags.Optional);
+    return router?.events ?? EMPTY;
   },
-})
+});
 ```
 
 It looks simple. It is also safe, without unexpected falls and unnecessary events.
@@ -215,10 +215,10 @@ class SomeModule {
     const parent = inject(
       SomeModule,
       InjectFlags.Optional | InjectFlags.SkipSelf,
-    )
+    );
 
     if (parent) {
-      throw new Error('SomeModule is already exist!')
+      throw new Error('SomeModule is already exist!');
     }
   }
 }
@@ -227,8 +227,8 @@ class SomeModule {
 The value of the desired bit is obtained using a bitwise AND:
 
 ```typescript
-const flags = InjectFlags.Optional | InjectFlags.SkipSelf
-const isOptional = !!(flags & InjectFlags.Optional)
+const flags = InjectFlags.Optional | InjectFlags.SkipSelf;
+const isOptional = !!(flags & InjectFlags.Optional);
 ```
 
 ## Tree shakable services and \*SansProviders
@@ -238,7 +238,7 @@ _\*SansProviders — shorthand for base interfaces of common providers_ [_Va
 Tree shakable services are a special way of telling the compiler that a service should not be included in an assembly if it is not used anywhere. In this case, the service is not indicated in the module, rather the opposite — the module is indicated in the service.
 
 ```typescript
-import { Injectable } from '@angular/core'
+import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: SomeModule })
 export class SomeService {}
@@ -258,8 +258,8 @@ _providedIn_ can also contain special values: _root_, _platform_, and _any_. Thi
 The most useful way, in my opinion, to use a factory in tree shakable services looks like this
 
 ```typescript
-import { Injectable, Optional } from '@angular/core'
-import { SharedModule } from './shared.module'
+import { Injectable, Optional } from '@angular/core';
+import { SharedModule } from './shared.module';
 
 @Injectable({
   providedIn: SharedModule,
@@ -269,7 +269,7 @@ import { SharedModule } from './shared.module'
 })
 export class SingletonService {
   constructor() {
-    console.count('SingletonService constructed')
+    console.count('SingletonService constructed');
   }
 }
 ```
@@ -311,7 +311,7 @@ But not a word has been said about the fact that a child directive/component can
 > UPD: found [the link to the documentation](https://angular.io/guide/dependency-injection-navtree) that describes this method.
 
 ```typescript
-import { Component } from '@angular/core'
+import { Component } from '@angular/core';
 
 @Component({
   template: `
@@ -321,7 +321,7 @@ import { Component } from '@angular/core'
   selector: 'count-component',
 })
 export class CountComponent {
-  count: number = 0
+  count: number = 0;
 }
 ```
 

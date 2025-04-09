@@ -1,6 +1,6 @@
-import { ArticleLayout } from '@/components/ArticleLayout'
-import Image from 'next/image'
-import angularUniversal from './angular-universal.png'
+import { ArticleLayout } from '@/components/ArticleLayout';
+import Image from 'next/image';
+import angularUniversal from './angular-universal.png';
 
 export const article = {
   author: 'Igor Katsuba',
@@ -8,14 +8,14 @@ export const article = {
   title: 'Angular Universal: real app problems',
   description:
     'Angular Universal is an open-source project that extends the functionality of @angular/platform-server. The project makes server-side rendering possible in Angular.',
-}
+};
 
 export const metadata = {
   title: article.title,
   description: article.description,
-}
+};
 
-export default (props) => <ArticleLayout article={article} {...props} />
+export default (props) => <ArticleLayout article={article} {...props} />;
 
 <Image src={angularUniversal} alt="Angular Universal" />
 
@@ -62,8 +62,8 @@ Now we can assume that the user is trying to open an application that cannot ach
 **Possible Solution.** To avoid the situation with long requests, use the timeout operator from rxjs library:
 
 ```typescript
-import { timeout, catchError } from 'rxjs/operators'
-import { of } from 'rxjs/observable/of'
+import { timeout, catchError } from 'rxjs/operators';
+import { of } from 'rxjs/observable/of';
 
 http
   .get('https://example.com')
@@ -71,7 +71,7 @@ http
     timeout(2000),
     catchError((e) => of(null)),
   )
-  .subscribe()
+  .subscribe();
 ```
 
 The operator will throw an exception after a specified if no server response is received.
@@ -84,11 +84,11 @@ This approach has 2 cons:
 As a more straightforward solution, you can use the NgxSsrTimeoutModule module from the [@ngx-ssr/timeout](https://github.com/IKatsuba/ngx-ssr) package. Import the module with the timeout value into the root module of the application. If the module is imported into AppServerModule, then HTTP request timeouts will only work for the server.
 
 ```typescript
-import { NgModule } from '@angular/core'
-import { ServerModule } from '@angular/platform-server'
-import { AppModule } from './app.module'
-import { AppComponent } from './app.component'
-import { NgxSsrTimeoutModule } from '@ngx-ssr/timeout'
+import { NgModule } from '@angular/core';
+import { ServerModule } from '@angular/platform-server';
+import { AppModule } from './app.module';
+import { AppComponent } from './app.component';
+import { NgxSsrTimeoutModule } from '@ngx-ssr/timeout';
 
 @NgModule({
   imports: [
@@ -104,7 +104,7 @@ export class AppServerModule {}
 Use the [NgZone](https://angular.io/api/core/NgZone) service to take asynchronous operations out of the Angular zone.
 
 ```typescript
-import { Injectable, NgZone } from '@angular/core'
+import { Injectable, NgZone } from '@angular/core';
 
 @Injectable()
 export class SomeService {
@@ -112,8 +112,8 @@ export class SomeService {
     this.ngZone.runOutsideAngular(() => {
       interval(1).subscribe(() => {
         // somo code
-      })
-    })
+      });
+    });
   }
 }
 ```
@@ -121,13 +121,13 @@ export class SomeService {
 To solve this problem, you can use the [tuiZonefree](https://github.com/TinkoffCreditSystems/taiga-ui/blob/main/projects/cdk/observables/zone-free.ts#L30) from the `@taiga-ui/cdk`:
 
 ```typescript
-import { Injectable, NgZone } from '@angular/core'
-import { tuiZonefree } from '@taiga-ui/cdk'
+import { Injectable, NgZone } from '@angular/core';
+import { tuiZonefree } from '@taiga-ui/cdk';
 
 @Injectable()
 export class SomeService {
   constructor(private ngZone: NgZone) {
-    interval(1).pipe(tuiZonefree(ngZone)).subscribe()
+    interval(1).pipe(tuiZonefree(ngZone)).subscribe();
   }
 }
 ```
@@ -163,11 +163,11 @@ The `maxSize` property is responsible for the maximum cache size. A value of 50 
 The `maxAge` property is responsible for the cache lifetime. Specified in milliseconds.
 
 ```typescript
-import { BrowserModule } from '@angular/platform-browser'
-import { NgModule } from '@angular/core'
-import { AppComponent } from './app.component'
-import { NgxSsrCacheModule } from '@ngx-ssr/cache'
-import { environment } from '../environments/environment'
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { AppComponent } from './app.component';
+import { NgxSsrCacheModule } from '@ngx-ssr/cache';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [AppComponent],
@@ -185,9 +185,9 @@ You can go ahead and cache the HTML itself.
 For example, everything in the same package `@ngx-ssr/cache` has a submodule `@ngx-ssr/cache/express`. It imports a single `withCache` function. The function is a wrapper over the render engine.
 
 ```typescript
-import { ngExpressEngine } from '@nguniversal/express-engine'
-import { LRUCache } from '@ngx-ssr/cache'
-import { withCache } from '@ngx-ssr/cache/express'
+import { ngExpressEngine } from '@nguniversal/express-engine';
+import { LRUCache } from '@ngx-ssr/cache';
+import { withCache } from '@ngx-ssr/cache/express';
 
 server.engine(
   'html',
@@ -197,7 +197,7 @@ server.engine(
       bootstrap: AppServerModule,
     }),
   ),
-)
+);
 ```
 
 ### 3\. Server errors of type ReferenceError: localStorage is not defined
@@ -227,11 +227,11 @@ For example:
 The example above uses the `LOCAL_STORAGE` token from the [@ng-web-apis/common](https://github.com/ng-web-apis/common#tokens) package. But when we run this code on the server, we will get an error from the description. Just add `UNIVERSAL_LOCAL_STORAGE` from the package [@ng-web-apis/universal](https://github.com/ng-web-apis/universal) in the providers `AppServerModule`, and by the token `LOCAL_STORAGE`, you will receive an implementation of localStorage for the server.
 
 ```typescript
-import { NgModule } from '@angular/core'
-import { ServerModule } from '@angular/platform-server'
-import { AppModule } from './app.module'
-import { AppComponent } from './app.component'
-import { UNIVERSAL_LOCAL_STORAGE } from '@ngx-ssr/timeout'
+import { NgModule } from '@angular/core';
+import { ServerModule } from '@angular/platform-server';
+import { AppModule } from './app.module';
+import { AppComponent } from './app.component';
+import { UNIVERSAL_LOCAL_STORAGE } from '@ngx-ssr/timeout';
 
 @NgModule({
   imports: [AppModule, ServerModule],
@@ -252,7 +252,7 @@ export class AppServerModule {}
   styleUrls: ['./app.component.less'],
 })
 export class AppComponent {
-  isServer = isPlatformServer(this.platformId)
+  isServer = isPlatformServer(this.platformId);
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
 }
@@ -267,9 +267,9 @@ First, let’s wrap the server definition in a token.
 ```typescript
 export const IS_SERVER_PLATFORM = new InjectionToken<boolean>('Is server?', {
   factory() {
-    return isPlatformServer(inject(PLATFORM_ID))
+    return isPlatformServer(inject(PLATFORM_ID));
   },
-})
+});
 ```
 
 Create a structured directive using the `IS_SERVER_PLATFORM` token with one simple target: render the component only on the server.
@@ -285,7 +285,7 @@ export class IfIsServerDirective {
     viewContainer: ViewContainerRef,
   ) {
     if (isServer) {
-      viewContainer.createEmbeddedView(templateRef)
+      viewContainer.createEmbeddedView(templateRef);
     }
   }
 }
@@ -333,21 +333,21 @@ This code does not affect the application’s stability, but the callback passed
 **Possible Solution.** In our case, the problem is solved by using the ngOnDestoroy hook. It works for both components and services. We need to save the subscription and terminate it when the service is destructed. There are many techniques for unsubscribing, but here is just one:
 
 ```typescript
-import { Injectable, NgZone, OnDestroy } from '@angular/core'
-import { interval, Subscription } from 'rxjs'
+import { Injectable, NgZone, OnDestroy } from '@angular/core';
+import { interval, Subscription } from 'rxjs';
 
 @Injectable()
 export class LocationService implements OnDestroy {
-  private subscription: Subscription
+  private subscription: Subscription;
 
   constructor(ngZone: NgZone) {
     this.subscription = ngZone.runOutsideAngular(() =>
       interval(1000).subscribe(() => {}),
-    )
+    );
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe()
+    this.subscription.unsubscribe();
   }
 }
 ```

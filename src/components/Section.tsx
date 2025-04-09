@@ -1,13 +1,13 @@
-import { useId } from 'react'
+import { useId } from 'react';
 
 export function Section({
   title,
   children,
 }: {
-  title: string
-  children: React.ReactNode
+  title: string;
+  children: React.ReactNode;
 }) {
-  let id = useId()
+  let id = useId();
 
   return (
     <section
@@ -24,5 +24,5 @@ export function Section({
         <div className="md:col-span-3">{children}</div>
       </div>
     </section>
-  )
+  );
 }

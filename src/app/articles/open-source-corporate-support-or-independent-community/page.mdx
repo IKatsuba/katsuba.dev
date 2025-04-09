@@ -1,6 +1,6 @@
-import { ArticleLayout } from '@/components/ArticleLayout'
-import Image from 'next/image'
-import mainImage from './main.png'
+import { ArticleLayout } from '@/components/ArticleLayout';
+import Image from 'next/image';
+import mainImage from './main.png';
 
 export const article = {
   author: 'Igor Katsuba',
@@ -9,14 +9,14 @@ export const article = {
     '🌐 Open Source: Corporate Support, Independent  Community, or Hybrid Approach?',
   description:
     "Open-source software plays a huge role in today's tech world. Developers everywhere use, modify, and share these projects. How do corporate-backed open-source projects compare to those driven solely by the community?",
-}
+};
 
 export const metadata = {
   title: article.title,
   description: article.description,
-}
+};
 
-export default (props) => <ArticleLayout article={article} {...props} />
+export default (props) => <ArticleLayout article={article} {...props} />;
 
 <Image src={mainImage} alt="Main" />
 

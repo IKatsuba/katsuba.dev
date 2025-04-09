@@ -1,21 +1,21 @@
-import { ArticleLayout } from '@/components/ArticleLayout'
-import Image from 'next/image'
-import ngccImage from './ngcc.png'
-import terminalImage from './terminal.png'
+import { ArticleLayout } from '@/components/ArticleLayout';
+import Image from 'next/image';
+import ngccImage from './ngcc.png';
+import terminalImage from './terminal.png';
 export const article = {
   author: 'Igor Katsuba',
   date: '2023-05-16',
   title: 'The Removal of Angular Compatibility Compiler (ngcc) in Angular 16',
   description:
     'The Angular Compatibility Compiler (`ngcc`) is a compiler designed to convert libraries compiled with the Angular Compiler (`ngc`) into a format compatible with Angular Ivy. Ivy is a rendering and compiling engine introduced in Angular 9.',
-}
+};
 
 export const metadata = {
   title: article.title,
   description: article.description,
-}
+};
 
-export default (props) => <ArticleLayout article={article} {...props} />
+export default (props) => <ArticleLayout article={article} {...props} />;
 
 <Image src={ngccImage} alt="ngcc" />
 

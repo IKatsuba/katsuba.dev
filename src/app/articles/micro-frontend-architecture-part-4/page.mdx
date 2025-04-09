@@ -1,7 +1,7 @@
-import { ArticleLayout } from '@/components/ArticleLayout'
-import mainImage from './main.png'
-import ideScreenshot from './ide-screenshot.png'
-import Image from 'next/image'
+import { ArticleLayout } from '@/components/ArticleLayout';
+import mainImage from './main.png';
+import ideScreenshot from './ide-screenshot.png';
+import Image from 'next/image';
 
 export const article = {
   author: 'Igor Katsuba',
@@ -9,14 +9,14 @@ export const article = {
   title: 'Micro-frontend Architecture. Part 4. Tooling and Practice',
   description:
     'Discover the power of microfrontend architecture in CRM systems for seamless scalability and rapid feature integration',
-}
+};
 
 export const metadata = {
   title: article.title,
   description: article.description,
-}
+};
 
-export default (props) => <ArticleLayout article={article} {...props} />
+export default (props) => <ArticleLayout article={article} {...props} />;
 
 <Image src={mainImage} alt="Main" />
 
@@ -176,9 +176,9 @@ nx g @nx/plugin:generator --name=library --directory=nx-plugin/src/generators/li
 If we take a look inside `nx-plugin/src/generators/library`, we'll find a `generator.ts` file and its corresponding test file. This example generator creates an empty project in the monorepo. We'll replace the source code of this file to add the ability to generate an Angular library. 🚀
 
 ```typescript
-import { formatFiles, Tree } from '@nx/devkit'
-import { libraryGenerator as ngLibraryGenerator } from '@nx/angular/generators'
-import { LibraryGeneratorSchema } from './schema'
+import { formatFiles, Tree } from '@nx/devkit';
+import { libraryGenerator as ngLibraryGenerator } from '@nx/angular/generators';
+import { LibraryGeneratorSchema } from './schema';
 
 export async function libraryGenerator(
   tree: Tree,
@@ -188,20 +188,20 @@ export async function libraryGenerator(
     name: options.name,
     directory: `libs/${options.layer}`,
     tags: [`layer:${options.layer}`, options.tags].filter(Boolean).join(','),
-  })
-  await formatFiles(tree)
+  });
+  await formatFiles(tree);
 }
 
-export default libraryGenerator
+export default libraryGenerator;
 ```
 
 It's also necessary to adjust the `schema.d.ts` file and add new fields `schema.json`, paying attention to the `x-prompt` field, which provides an interactive selection from a proposed list. This adds convenience and interactivity to the library creation process.
 
 ```typescript
 export interface LibraryGeneratorSchema {
-  name: string
-  tags?: string
-  layer: 'core' | 'feature' | 'block' | 'page' | 'app'
+  name: string;
+  tags?: string;
+  layer: 'core' | 'feature' | 'block' | 'page' | 'app';
 }
 ```
 

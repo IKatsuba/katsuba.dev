@@ -1,7 +1,7 @@
-import { ArticleLayout } from '@/components/ArticleLayout'
-import Image from 'next/image'
-import mainImage from './main.png'
-import concatMapImage from './concat-map.png'
+import { ArticleLayout } from '@/components/ArticleLayout';
+import Image from 'next/image';
+import mainImage from './main.png';
+import concatMapImage from './concat-map.png';
 
 export const article = {
   author: 'Igor Katsuba',
@@ -9,14 +9,14 @@ export const article = {
   title: 'RxJS: How Higher Order Operators Simplify Code',
   description:
     'RxJS is a powerful library for reactive programming. Higher-order operators are a powerful tool in the arsenal of every developer working with reactive programming. They provide flexibility and elegance when handling complex data observables and allow us to shorten code, making it more readable and maintainable.',
-}
+};
 
 export const metadata = {
   title: article.title,
   description: article.description,
-}
+};
 
-export default (props) => <ArticleLayout article={article} {...props} />
+export default (props) => <ArticleLayout article={article} {...props} />;
 
 <Image src={mainImage} alt="Main" />
 
@@ -31,16 +31,16 @@ In this article, I will show you that there is nothing mythical about HOO, and I
 Let’s examine the code:
 
 ```typescript
-const searchInput = document.getElementById('search-input')
+const searchInput = document.getElementById('search-input');
 const search$ = fromEvent(searchInput, 'input').pipe(
   map((event) => event.target.value),
-)
+);
 
 search$.subscribe((query) => {
   http.get('/search', { params: { query } }).subcribe((result) => {
-    console.log(result)
-  })
-})
+    console.log(result);
+  });
+});
 ```
 
 In this code, we find the input that the user is interacting with and subscribe to the `input` event. That is, the `search$` observable emits strings. Inside the subscription, we can see that for each string emit, a request is sent to the server and the service response is output to the console.
@@ -61,39 +61,39 @@ But let’s think about how search should work:
 This can be implemented in the following way:
 
 ```typescript
-const searchInput = document.getElementById('search-input')
+const searchInput = document.getElementById('search-input');
 
 const search$ = fromEvent(searchInput, 'input').pipe(
   map((event) => event.target.value),
-)
+);
 
-let subscription
+let subscription;
 search$.subscribe((query) => {
   if (subscription) {
-    subscription.unsubscribe()
+    subscription.unsubscribe();
   }
 
   subscription = http
     .get('/search', { params: { query } })
     .subcribe((result) => {
-      console.log(result)
-    })
-})
+      console.log(result);
+    });
+});
 ```
 
 But what if I told you that the first 4 requirement clauses are done by the `switchMap` operator? Let's rewrite the code:
 
 ```typescript
-const searchInput = document.getElementById('search-input')
+const searchInput = document.getElementById('search-input');
 const search$ = fromEvent(searchInput, 'input').pipe(
   map((event) => event.target.value),
-)
+);
 
 search$
   .pipe(switchMap((query) => http.get('/search', { params: { query } })))
   .subscribe((result) => {
-    console.log(result)
-  })
+    console.log(result);
+  });
 ```
 
 The `switchMap` ensures that we always get the results of the last observable and saves us from the race condition. And a nice bonus is that unsubscribing from the external subscription will automatically unsubscribe from the internal one. Profit!
@@ -105,17 +105,17 @@ The `switchMap` ensures that we always get the results of the last observable an
 `exhaustMap` is definitely the most unpopular of all. The reason is not completely clear to me, but it can also be used to implement search, but using a different approach.
 
 ```typescript
-const searchInput = document.getElementById('search-input')
-const searchButton = document.getElementById('search-button')
+const searchInput = document.getElementById('search-input');
+const searchButton = document.getElementById('search-button');
 
-const searchButtonClick$ = fromEvent(searchButton, 'click')
+const searchButtonClick$ = fromEvent(searchButton, 'click');
 
 searchButtonClick$.subscribe((result) => {
-  const query = searchInput.value
+  const query = searchInput.value;
   http.get('/search', { params: { query } }).subscribe((result) => {
-    console.log(result)
-  })
-})
+    console.log(result);
+  });
+});
 ```
 
 In this code, the initiator of the query is the button click.
@@ -179,9 +179,9 @@ Let’s move on to examples:
 ```typescript
 entityId$.subscribe((id) => {
   entityService.get(id).subscribe(() => {
-    entityStore.upsertItem(entity)
-  })
-})
+    entityStore.upsertItem(entity);
+  });
+});
 ```
 
 In this code, we see `entityId$` is an observable of strings with the ID of some entity. Here we have to request entity data from the server for each ID and add or update this entity in the store. Actually, this is what our code does and there is nothing to solve here. But there are problems, and in this case, they are absolutely identical to the previous ones. Let's try to complicate the task and introduce a limit of 3 requests at one moment of time.
@@ -189,30 +189,30 @@ In this code, we see `entityId$` is an observable of strings with the ID of some
 We solve it:
 
 ```typescript
-const CONCURRENT_REQUESTS = 3
-let activeRequests = 0
-const queue = []
+const CONCURRENT_REQUESTS = 3;
+let activeRequests = 0;
+const queue = [];
 
 function processNext() {
   if (queue.length === 0 || activeRequests >= CONCURRENT_REQUESTS) {
-    return
+    return;
   }
 
-  const id = queue.shift()
-  activeRequests++
+  const id = queue.shift();
+  activeRequests++;
 
   entityService.get(id).subscribe((entity) => {
-    entityStore.upsertItem(entity)
-    activeRequests--
+    entityStore.upsertItem(entity);
+    activeRequests--;
 
-    processNext()
-  })
+    processNext();
+  });
 }
 
 entityId$.subscribe((id) => {
-  queue.push(id)
-  processNext()
-})
+  queue.push(id);
+  processNext();
+});
 ```
 
 I didn’t even try to test the code to see if it worked because I wrote it directly in the text editor. The code became difficult to read. The `processNext` function has several side effects inside. And there are additional variables outside the observable and function. Putting it all together is quite difficult.
@@ -221,8 +221,8 @@ These are precisely the kind of tasks that `mergeMap` solves. Let's rewrite the 
 
 ```typescript
 entityId$.pipe(mergeMap((id) => entityService.get(id))).subscribe((entity) => {
-  entityStore.upsertItem(entity)
-})
+  entityStore.upsertItem(entity);
+});
 ```
 
 In this code, `mergeMap` subscribes to each observable returned by `entityService.get(id)` and outputs their values in one single observable.

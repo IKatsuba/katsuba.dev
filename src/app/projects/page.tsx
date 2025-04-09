@@ -1,13 +1,13 @@
-import { type Metadata } from 'next'
-import Image from 'next/image'
+import { type Metadata } from 'next';
+import Image from 'next/image';
 
-import { Card } from '@/components/Card'
-import { SimpleLayout } from '@/components/SimpleLayout'
-import logoSaasfy from '@/images/logos/saasfy.svg'
-import logoMutates from '@/images/logos/mutates.png'
-import logoNx from '@/images/logos/nx.png'
-import logoRspress from '@/images/logos/rspress.png'
-import logoRevelio from '@/images/logos/revelio.jpeg'
+import { Card } from '@/components/Card';
+import { SimpleLayout } from '@/components/SimpleLayout';
+import logoSaasfy from '@/images/logos/saasfy.svg';
+import logoMutates from '@/images/logos/mutates.png';
+import logoNx from '@/images/logos/nx.png';
+import logoRspress from '@/images/logos/rspress.png';
+import logoRevelio from '@/images/logos/revelio.jpeg';
 
 const projects = [
   {
@@ -44,7 +44,7 @@ const projects = [
     link: { href: 'https://github.com/IKatsuba/revelio', label: 'github.com' },
     logo: logoRevelio,
   },
-]
+];
 
 function LinkIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   return (
@@ -54,13 +54,13 @@ function LinkIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
         fill="currentColor"
       />
     </svg>
-  )
+  );
 }
 
 export const metadata: Metadata = {
   title: 'Projects',
   description: 'Things I’ve made trying to put my dent in the universe.',
-}
+};
 
 export default function Projects() {
   return (
@@ -94,5 +94,5 @@ export default function Projects() {
         ))}
       </ul>
     </SimpleLayout>
-  )
+  );
 }

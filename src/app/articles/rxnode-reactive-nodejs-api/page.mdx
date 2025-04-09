@@ -1,6 +1,6 @@
-import { ArticleLayout } from '@/components/ArticleLayout'
-import Image from 'next/image'
-import mainImage from './main.png'
+import { ArticleLayout } from '@/components/ArticleLayout';
+import Image from 'next/image';
+import mainImage from './main.png';
 
 export const article = {
   author: 'Igor Katsuba',
@@ -8,14 +8,14 @@ export const article = {
   title: 'Rxnode — reactive nodejs API',
   description:
     'At the beginning of 2020, my career as a frontend developer turned in an unexpected direction for me. I haven’t written a single Angular component in a year. I Replaced Angular with server code and code for the CLI. It was a new and interesting experience for me, but it wasn’t easy to solve my usual tasks without RxJS.',
-}
+};
 
 export const metadata = {
   title: article.title,
   description: article.description,
-}
+};
 
-export default (props) => <ArticleLayout article={article} {...props} />
+export default (props) => <ArticleLayout article={article} {...props} />;
 
 <Image src={mainImage} alt="Main" />
 
@@ -24,40 +24,40 @@ At the beginning of 2020, my career as a frontend developer turned in an unexpec
 Let’s look at a simple example of reading and writing a file using the native features of nodejs
 
 ```typescript
-import { readFile, writeFile } from 'fs'
+import { readFile, writeFile } from 'fs';
 
 readFile('src/some-file.js', (error, data) => {
   if (error) {
-    console.error(error)
-    return
+    console.error(error);
+    return;
   }
 
   writeFile('src/some-file.js', data, (error) => {
     if (error) {
-      console.error(error)
-      return
+      console.error(error);
+      return;
     }
 
-    console.log('Success!')
-  })
-})
+    console.log('Success!');
+  });
+});
 ```
 
 Code with callbacks after Angular seems complicated. First, I translated callbacks to promises.
 
 ```typescript
-import * as fs from 'fs'
-import { promisify } from 'util'
+import * as fs from 'fs';
+import { promisify } from 'util';
 
-const readFile = promisify(fs.readFile)
-const writeFile = promisify(fs.writeFile)
+const readFile = promisify(fs.readFile);
+const writeFile = promisify(fs.writeFile);
 
 readFile('src/some-file.js')
   .then((data) => writeFile('src/some-file.js', data))
   .then(() => {
-    console.log('Success!')
+    console.log('Success!');
   })
-  .cacth(console.error)
+  .cacth(console.error);
 ```
 
 I was OK with this solution until I needed to implement several tasks’ competitive execution with a limit. RxJS has such an opportunity out of the box. Why would I invent my own algorithm on promises?
@@ -93,31 +93,31 @@ It quickly became apparent that you need to import and wrap the API in each file
 The project is NX Workspace. Each core package from nodejs corresponds to one library in a scope. If you want to use the `fs` package, you import functions with the same names from the`@rxnode/fs` packages.
 
 ```typescript
-import { readFile, writeFile } from '@rxnode/fs'
-import { switchMap } from 'rxjs/operators'
+import { readFile, writeFile } from '@rxnode/fs';
+import { switchMap } from 'rxjs/operators';
 
 readFile('src/some-file.js')
   .pipe(switchMap((data) => writeFile('src/some-file.js', data)))
   .subscribe({
     complete() {
-      console.log('Complete!')
+      console.log('Complete!');
     },
-  })
+  });
 ```
 
 This is how you can start a simple server.
 
 ```typescript
-import { createServer } from '@rxnode/http'
+import { createServer } from '@rxnode/http';
 
-const server = createServer()
+const server = createServer();
 
 server.subscribe(([req, res]) => {
-  res.writeHead(200, { 'Content-Type': 'text/plain' })
-  res.end('okay')
-})
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('okay');
+});
 
-server.listen(8080).subscribe()
+server.listen(8080).subscribe();
 ```
 
 Currently, Rxnode contains only 4 packages out of 20 planned. An up-to-date list can be found in the [documentation](https://rxnode.gitbook.io/docs/). We will be glad to receive any help in project development! We need your ideas and your hands!

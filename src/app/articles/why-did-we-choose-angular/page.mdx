@@ -1,8 +1,8 @@
-import { ArticleLayout } from '@/components/ArticleLayout'
-import mainImage from './main.png'
-import ngNewTerminalScreenshot from './ng-new-terminal-screenshot.png'
-import memeImage from './meme.png'
-import communityImage from './community.png'
+import { ArticleLayout } from '@/components/ArticleLayout';
+import mainImage from './main.png';
+import ngNewTerminalScreenshot from './ng-new-terminal-screenshot.png';
+import memeImage from './meme.png';
+import communityImage from './community.png';
 
 export const article = {
   author: 'Igor Katsuba',
@@ -10,14 +10,14 @@ export const article = {
   title: 'Why did we choose Angular?',
   description:
     'A year ago, when PLATA was just born, we faced the first problem during a discussion about the web — what kind of frameworks we would like to use to build a new digital bank in Mexico. Of course, we had requirements for the framework. The time has come for modern and progressive SSR-first frameworks. We call them meta-frameworks. And the most significant part of them are not based on Angular. But why did we pick Angular?',
-}
+};
 
 export const metadata = {
   title: article.title,
   description: article.description,
-}
+};
 
-export default (props) => <ArticleLayout article={article} {...props} />
+export default (props) => <ArticleLayout article={article} {...props} />;
 
 <Image src={mainImage} alt="main" />
 
@@ -74,7 +74,7 @@ Angular meets most of the requirements. Let's check each of them.
   `,
 })
 export class UserControls {
-  isAdmin = true
+  isAdmin = true;
 }
 ```
 
@@ -96,8 +96,8 @@ All this makes Angular relatively fast, despite all the myths circulating it. Th
 ### Security ✅
 
 ```typescript
-import { bootstrapApplication, CSP_NONCE } from '@angular/core'
-import { AppComponent } from './app/app.component'
+import { bootstrapApplication, CSP_NONCE } from '@angular/core';
+import { AppComponent } from './app/app.component';
 bootstrapApplication(AppComponent, {
   providers: [
     {
@@ -105,7 +105,7 @@ bootstrapApplication(AppComponent, {
       useValue: globalThis.myRandomNonceValue,
     },
   ],
-})
+});
 ```
 
 Angular has built-in protection against common types of attacks:
@@ -178,7 +178,7 @@ This suits us quite well. The requirement has been met.
  * @publicApi
  */
 export function isPlatformServer(platformId) {
-  return platformId === PLATFORM_SERVER_ID
+  return platformId === PLATFORM_SERVER_ID;
 }
 ```
 

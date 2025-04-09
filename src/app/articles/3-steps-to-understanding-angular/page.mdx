@@ -1,6 +1,6 @@
-import { ArticleLayout } from '@/components/ArticleLayout'
-import Image from 'next/image'
-import ngMan from './ng-man.png'
+import { ArticleLayout } from '@/components/ArticleLayout';
+import Image from 'next/image';
+import ngMan from './ng-man.png';
 
 export const article = {
   author: 'Igor Katsuba',
@@ -8,14 +8,14 @@ export const article = {
   title: '3 steps to understanding Angular',
   description:
     'Angular is a big and complicated framework. Like any complex tool, you can’t learn it for 2 days. You have to work hard and practice for several years to begin to feel comfortable using it.',
-}
+};
 
 export const metadata = {
   title: article.title,
   description: article.description,
-}
+};
 
-export default (props) => <ArticleLayout article={article} {...props} />
+export default (props) => <ArticleLayout article={article} {...props} />;
 
 <Image src={ngMan} alt="NgMan" />
 

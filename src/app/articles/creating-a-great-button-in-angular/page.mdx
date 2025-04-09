@@ -1,7 +1,7 @@
-import { ArticleLayout } from '@/components/ArticleLayout'
-import Image from 'next/image'
-import pageImage from './page.png'
-import buttonImage from './button.png'
+import { ArticleLayout } from '@/components/ArticleLayout';
+import Image from 'next/image';
+import pageImage from './page.png';
+import buttonImage from './button.png';
 
 export const article = {
   author: 'Igor Katsuba',
@@ -9,14 +9,14 @@ export const article = {
   title: 'Creating a Great Button in Angular',
   description:
     'In Angular, numerous libraries provide ready-made components for rapid UI development. However, every company, especially those with a public presence, wants a distinctive design with appealing buttons, beautiful date and time input fields, and more. Developers are always up for this task because building a component library presents a challenge and an opportunity to delve deep into the framework.',
-}
+};
 
 export const metadata = {
   title: article.title,
   description: article.description,
-}
+};
 
-export default (props) => <ArticleLayout article={article} {...props} />
+export default (props) => <ArticleLayout article={article} {...props} />;
 
 <Image src={pageImage} alt="Page" />
 
@@ -52,10 +52,10 @@ When tackling such tasks, developers often think about creating inputs that esse
 })
 export class MyButtonComponent {
   @Input()
-  type: string
+  type: string;
 
   @Input()
-  form: string
+  form: string;
 
   // other attributes
 }

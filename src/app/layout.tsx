@@ -1,10 +1,10 @@
-import { type Metadata } from 'next'
+import { type Metadata } from 'next';
 
-import { Providers } from '@/app/providers'
-import { Layout } from '@/components/Layout'
+import { Providers } from '@/app/providers';
+import { Layout } from '@/components/Layout';
 
-import '@/styles/tailwind.css'
-import Script from 'next/script'
+import '@/styles/tailwind.css';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: {
@@ -19,12 +19,12 @@ export const metadata: Metadata = {
       'application/rss+xml': `${process.env.NEXT_PUBLIC_SITE_URL}/feed.xml`,
     },
   },
-}
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en" className="h-full antialiased" suppressHydrationWarning>
@@ -37,5 +37,5 @@ export default function RootLayout({
       </body>
       <Script src="https://assets.onedollarstats.com/stonks.js" />
     </html>
-  )
+  );
 }

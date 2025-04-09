@@ -1,7 +1,7 @@
-import { ArticleLayout } from '@/components/ArticleLayout'
-import Image from 'next/image'
-import mainImage from './main.png'
-import logosImage from './logos.png'
+import { ArticleLayout } from '@/components/ArticleLayout';
+import Image from 'next/image';
+import mainImage from './main.png';
+import logosImage from './logos.png';
 
 export const article = {
   author: 'Igor Katsuba',
@@ -9,14 +9,14 @@ export const article = {
   title: 'Saasfy — your modern SaaS template',
   description:
     'Saasfy is a modern SaaS template that helps you build your SaaS application faster and easier. It is a monorepo with many features for fast application building.',
-}
+};
 
 export const metadata = {
   title: article.title,
   description: article.description,
-}
+};
 
-export default (props) => <ArticleLayout article={article} {...props} />
+export default (props) => <ArticleLayout article={article} {...props} />;
 
 <Image src={mainImage} alt="Main" />
 

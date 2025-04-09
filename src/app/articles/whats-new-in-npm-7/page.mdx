@@ -1,6 +1,6 @@
-import { ArticleLayout } from '@/components/ArticleLayout'
-import npmImage from './npm.png'
-import terminalImage from './terminal.png'
+import { ArticleLayout } from '@/components/ArticleLayout';
+import npmImage from './npm.png';
+import terminalImage from './terminal.png';
 
 export const article = {
   author: 'Igor Katsuba',
@@ -8,14 +8,14 @@ export const article = {
   title: 'What’s new in npm 7',
   description:
     'On October 13th, npm@7.0.0 was released. The release is experimental and available for download from the public npm registry with the next-7 tag. Also, npm 7 comes with node.js 15.',
-}
+};
 
 export const metadata = {
   title: article.title,
   description: article.description,
-}
+};
 
-export default (props) => <ArticleLayout article={article} {...props} />
+export default (props) => <ArticleLayout article={article} {...props} />;
 
 <Image src={npmImage} alt="npm" />
 

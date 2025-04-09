@@ -1,6 +1,6 @@
-import { ArticleLayout } from '@/components/ArticleLayout'
-import Image from 'next/image'
-import angularMyths from './angular-myths.png'
+import { ArticleLayout } from '@/components/ArticleLayout';
+import Image from 'next/image';
+import angularMyths from './angular-myths.png';
 
 export const article = {
   author: 'Igor Katsuba',
@@ -8,14 +8,14 @@ export const article = {
   title: '8 Angular Myths It’s Time to Forget',
   description:
     'Angular is a powerful and widely used web application development framework, but there are many misconceptions and myths surrounding it. In this article, we’ll debunk 8 of the most common Angular myths and dive into the reasons behind them. By dispelling these myths, developers can better understand Angular’s capabilities and use it more effectively in their projects.',
-}
+};
 
 export const metadata = {
   title: article.title,
   description: article.description,
-}
+};
 
-export default (props) => <ArticleLayout article={article} {...props} />
+export default (props) => <ArticleLayout article={article} {...props} />;
 
 <Image src={angularMyths} alt="Angular Myths" />
 

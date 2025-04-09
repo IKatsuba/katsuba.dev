@@ -1,7 +1,7 @@
-import rehypePrism from '@mapbox/rehype-prism'
-import nextMDX from '@next/mdx'
-import remarkGfm from 'remark-gfm'
-import glob from 'fast-glob'
+import rehypePrism from '@mapbox/rehype-prism';
+import nextMDX from '@next/mdx';
+import remarkGfm from 'remark-gfm';
+import glob from 'fast-glob';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -14,38 +14,38 @@ const nextConfig = {
   async redirects() {
     const articleFilenames = await glob('*/page.mdx', {
       cwd: './src/app/articles',
-    })
+    });
 
     const redirects = articleFilenames.map((filename) => {
       return {
         source: `/${filename.replace('/page.mdx', '')}`,
         destination: `/articles/${filename.replace('/page.mdx', '')}`,
         permanent: true,
-      }
-    })
+      };
+    });
 
-    console.log(redirects)
+    console.log(redirects);
 
     return [
-      ...redirects, 
+      ...redirects,
       {
-      source: '/micro-frontend-architecture-part-3-layered-architecture',
-      destination: '/articles/micro-frontend-architecture-part-3',
-      permanent: true,
-    },
-    {
-      source: '/micro-frontend-architechture-part-1',
-      destination: '/articles/micro-frontend-architecture-part-1',
-      permanent: true,
-    },
-    {
-      source: '/micro-frontend-architechture-part-2',
-      destination: '/articles/micro-frontend-architecture-part-2',
-      permanent: true,
-    },
-  ]
+        source: '/micro-frontend-architecture-part-3-layered-architecture',
+        destination: '/articles/micro-frontend-architecture-part-3',
+        permanent: true,
+      },
+      {
+        source: '/micro-frontend-architechture-part-1',
+        destination: '/articles/micro-frontend-architecture-part-1',
+        permanent: true,
+      },
+      {
+        source: '/micro-frontend-architechture-part-2',
+        destination: '/articles/micro-frontend-architecture-part-2',
+        permanent: true,
+      },
+    ];
   },
-}
+};
 
 const withMDX = nextMDX({
   extension: /\.mdx?$/,
@@ -53,6 +53,6 @@ const withMDX = nextMDX({
     remarkPlugins: [remarkGfm],
     rehypePlugins: [rehypePrism],
   },
-})
+});
 
-export default withMDX(nextConfig)
+export default withMDX(nextConfig);

@@ -1,10 +1,10 @@
-import { ArticleLayout } from '@/components/ArticleLayout'
-import Image from 'next/image'
-import tbdImage from './tbd.png'
-import trunkImage from './trunk.png'
-import featureFlagsImage from './ff.png'
-import matureImage from './mature.png'
-import testingImage from './testing.png'
+import { ArticleLayout } from '@/components/ArticleLayout';
+import Image from 'next/image';
+import tbdImage from './tbd.png';
+import trunkImage from './trunk.png';
+import featureFlagsImage from './ff.png';
+import matureImage from './mature.png';
+import testingImage from './testing.png';
 
 export const article = {
   author: 'Igor Katsuba',
@@ -13,14 +13,14 @@ export const article = {
     'Trunk-Based Development: Introduction, Benefits, and Implementation Challenges',
   description:
     'Trunk-Based Development (TBD) is a repository management approach that is becoming increasingly popular due to its simplicity and effectiveness. TBD focuses on using a single main branch — the Trunk — while avoiding long-lived branches, allowing for better control over code, fewer merge conflicts, and a faster deployment process.',
-}
+};
 
 export const metadata = {
   title: article.title,
   description: article.description,
-}
+};
 
-export default (props) => <ArticleLayout article={article} {...props} />
+export default (props) => <ArticleLayout article={article} {...props} />;
 
 <Image src={tbdImage} alt="TBD" />
 

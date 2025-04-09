@@ -1,29 +1,29 @@
-import Image, { type ImageProps } from 'next/image'
-import Link from 'next/link'
-import clsx from 'clsx'
+import Image, { type ImageProps } from 'next/image';
+import Link from 'next/link';
+import clsx from 'clsx';
 
-import { Button } from '@/components/Button'
-import { Card } from '@/components/Card'
-import { Container } from '@/components/Container'
+import { Button } from '@/components/Button';
+import { Card } from '@/components/Card';
+import { Container } from '@/components/Container';
 import {
   GitHubIcon,
   InstagramIcon,
   LinkedInIcon,
   XIcon,
-} from '@/components/SocialIcons'
-import logoTinkoff from '@/images/logos/tinkoff.png'
-import logoFixGroup from '@/images/logos/fix.png'
-import logoPlata from '@/images/logos/plata.png'
-import logoRTLabs from '@/images/logos/rtlabs.png'
-import image1 from '@/images/photos/image-1.jpg'
-import image2 from '@/images/photos/image-2.jpg'
-import image3 from '@/images/photos/image-3.jpg'
-import image4 from '@/images/photos/image-4.jpg'
-import image5 from '@/images/photos/image-5.jpg'
-import { type ArticleWithSlug, getAllArticles } from '@/lib/articles'
-import { formatDate } from '@/lib/formatDate'
-import { subscribe } from '@/actions/subscribe'
-import { Booking } from '@/components/Booking'
+} from '@/components/SocialIcons';
+import logoTinkoff from '@/images/logos/tinkoff.png';
+import logoFixGroup from '@/images/logos/fix.png';
+import logoPlata from '@/images/logos/plata.png';
+import logoRTLabs from '@/images/logos/rtlabs.png';
+import image1 from '@/images/photos/image-1.jpg';
+import image2 from '@/images/photos/image-2.jpg';
+import image3 from '@/images/photos/image-3.jpg';
+import image4 from '@/images/photos/image-4.jpg';
+import image5 from '@/images/photos/image-5.jpg';
+import { type ArticleWithSlug, getAllArticles } from '@/lib/articles';
+import { formatDate } from '@/lib/formatDate';
+import { subscribe } from '@/actions/subscribe';
+import { Booking } from '@/components/Booking';
 
 function MailIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   return (
@@ -45,7 +45,7 @@ function MailIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
         className="stroke-zinc-400 dark:stroke-zinc-500"
       />
     </svg>
-  )
+  );
 }
 
 function BriefcaseIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
@@ -68,7 +68,7 @@ function BriefcaseIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
         className="stroke-zinc-400 dark:stroke-zinc-500"
       />
     </svg>
-  )
+  );
 }
 
 function ArrowDownIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
@@ -81,7 +81,7 @@ function ArrowDownIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
         strokeLinejoin="round"
       />
     </svg>
-  )
+  );
 }
 
 function Article({ article }: { article: ArticleWithSlug }) {
@@ -96,20 +96,20 @@ function Article({ article }: { article: ArticleWithSlug }) {
       <Card.Description>{article.description}</Card.Description>
       <Card.Cta>Read article</Card.Cta>
     </Card>
-  )
+  );
 }
 
 function SocialLink({
   icon: Icon,
   ...props
 }: React.ComponentPropsWithoutRef<typeof Link> & {
-  icon: React.ComponentType<{ className?: string }>
+  icon: React.ComponentType<{ className?: string }>;
 }) {
   return (
     <Link className="group -m-1 p-1" {...props}>
       <Icon className="h-6 w-6 fill-zinc-500 transition group-hover:fill-zinc-600 dark:fill-zinc-400 dark:group-hover:fill-zinc-300" />
     </Link>
-  )
+  );
 }
 
 function Newsletter() {
@@ -139,25 +139,25 @@ function Newsletter() {
         </Button>
       </div>
     </form>
-  )
+  );
 }
 
 interface Role {
-  company: string
-  title: string
-  logo: ImageProps['src']
-  start: string | { label: string; dateTime: string }
-  end: string | { label: string; dateTime: string }
+  company: string;
+  title: string;
+  logo: ImageProps['src'];
+  start: string | { label: string; dateTime: string };
+  end: string | { label: string; dateTime: string };
 }
 
 function Role({ role }: { role: Role }) {
   let startLabel =
-    typeof role.start === 'string' ? role.start : role.start.label
+    typeof role.start === 'string' ? role.start : role.start.label;
   let startDate =
-    typeof role.start === 'string' ? role.start : role.start.dateTime
+    typeof role.start === 'string' ? role.start : role.start.dateTime;
 
-  let endLabel = typeof role.end === 'string' ? role.end : role.end.label
-  let endDate = typeof role.end === 'string' ? role.end : role.end.dateTime
+  let endLabel = typeof role.end === 'string' ? role.end : role.end.label;
+  let endDate = typeof role.end === 'string' ? role.end : role.end.dateTime;
 
   return (
     <li className="flex gap-4">
@@ -189,7 +189,7 @@ function Role({ role }: { role: Role }) {
         </dd>
       </dl>
     </li>
-  )
+  );
 }
 
 function Resume() {
@@ -222,7 +222,7 @@ function Resume() {
       start: '2014',
       end: '2018',
     },
-  ]
+  ];
 
   return (
     <div className="rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40">
@@ -245,11 +245,17 @@ function Resume() {
         <ArrowDownIcon className="h-4 w-4 stroke-zinc-400 transition group-active:stroke-zinc-600 dark:group-hover:stroke-zinc-50 dark:group-active:stroke-zinc-50" />
       </Button>
     </div>
-  )
+  );
 }
 
 function Photos() {
-  let rotations = ['rotate-2', '-rotate-2', 'rotate-2', 'rotate-2', '-rotate-2']
+  let rotations = [
+    'rotate-2',
+    '-rotate-2',
+    'rotate-2',
+    'rotate-2',
+    '-rotate-2',
+  ];
 
   return (
     <div className="mt-16 sm:mt-20">
@@ -272,34 +278,36 @@ function Photos() {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 export default async function Home() {
-  let articles = (await getAllArticles()).slice(0, 4)
+  let articles = (await getAllArticles()).slice(0, 4);
 
   console.log(process.env.CAL_API_KEY);
 
-  const response = await fetch('https://api.cal.com/v2/event-types?username=katsuba', {
-    headers: {
-      'Authorization': `Bearer ${process.env.CAL_API_KEY}`,
-      'cal-api-version': '2024-06-14'
+  const response = await fetch(
+    'https://api.cal.com/v2/event-types?username=katsuba',
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.CAL_API_KEY}`,
+        'cal-api-version': '2024-06-14',
+      },
+      next: {
+        revalidate: 60 * 60, // 1 hour
+      },
     },
-    next: {
-      revalidate: 60 * 60 // 1 hour
-    }
-  })
+  );
 
   const json = await response.json();
-
 
   const services = json.data.map((eventType: any) => ({
     title: eventType.title,
     description: eventType.description,
     duration: `${eventType.lengthInMinutes}m`,
     price: `$${eventType.price / 100}`,
-    calLink: `https://cal.com/katsuba/${eventType.slug}`
-  }))
+    calLink: `https://cal.com/katsuba/${eventType.slug}`,
+  }));
 
   return (
     <>
@@ -309,8 +317,8 @@ export default async function Home() {
             Software Engineer, JS Enthusiast, Open Source Contributor
           </h1>
           <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            I&apos;m Igor, a software engineer based in Limassol, Cyprus. I&apos;m the
-            biggest fan of JS and open source.
+            I&apos;m Igor, a software engineer based in Limassol, Cyprus.
+            I&apos;m the biggest fan of JS and open source.
           </p>
           <div className="mt-6 flex gap-6">
             <SocialLink
@@ -350,17 +358,18 @@ export default async function Home() {
         </div>
       </Container>
       <Container className="mt-24 md:mt-28">
-          <div className="mx-auto max-w-5xl">
-            <h2 className="text-4xl font-bold tracking-tight text-zinc-800 dark:text-zinc-100 sm:text-5xl">
-              Book a consultation
-            </h2>
-            <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-              Choose a service that best fits your needs. All consultations are conducted via video call.
-            </p>
-          </div>
-          <Booking services={services} />
+        <div className="mx-auto max-w-5xl">
+          <h2 className="text-4xl font-bold tracking-tight text-zinc-800 sm:text-5xl dark:text-zinc-100">
+            Book a consultation
+          </h2>
+          <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
+            Choose a service that best fits your needs. All consultations are
+            conducted via video call.
+          </p>
+        </div>
+        <Booking services={services} />
       </Container>
       <Photos />
     </>
-  )
+  );
 }

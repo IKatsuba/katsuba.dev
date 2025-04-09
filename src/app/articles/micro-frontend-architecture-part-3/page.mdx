@@ -1,6 +1,6 @@
-import { ArticleLayout } from '@/components/ArticleLayout'
-import mainImage from './main.png'
-import Image from 'next/image'
+import { ArticleLayout } from '@/components/ArticleLayout';
+import mainImage from './main.png';
+import Image from 'next/image';
 
 export const article = {
   author: 'Igor Katsuba',
@@ -8,14 +8,14 @@ export const article = {
   title: 'Micro-frontend Architecture. Part 3. Layered Architecture',
   description:
     'Discover the power of microfrontend architecture in CRM systems for seamless scalability and rapid feature integration',
-}
+};
 
 export const metadata = {
   title: article.title,
   description: article.description,
-}
+};
 
-export default (props) => <ArticleLayout article={article} {...props} />
+export default (props) => <ArticleLayout article={article} {...props} />;
 
 <Image src={mainImage} alt="Main" />
 

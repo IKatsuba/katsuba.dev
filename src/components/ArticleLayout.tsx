@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import { useContext } from 'react'
-import { useRouter } from 'next/navigation'
+import { useContext } from 'react';
+import { useRouter } from 'next/navigation';
 
-import { AppContext } from '@/app/providers'
-import { Container } from '@/components/Container'
-import { Prose } from '@/components/Prose'
-import { type ArticleWithSlug } from '@/lib/articles'
-import { formatDate } from '@/lib/formatDate'
+import { AppContext } from '@/app/providers';
+import { Container } from '@/components/Container';
+import { Prose } from '@/components/Prose';
+import { type ArticleWithSlug } from '@/lib/articles';
+import { formatDate } from '@/lib/formatDate';
 
 function ArrowLeftIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   return (
@@ -19,18 +19,18 @@ function ArrowLeftIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
         strokeLinejoin="round"
       />
     </svg>
-  )
+  );
 }
 
 export function ArticleLayout({
   article,
   children,
 }: {
-  article: ArticleWithSlug
-  children: React.ReactNode
+  article: ArticleWithSlug;
+  children: React.ReactNode;
 }) {
-  let router = useRouter()
-  let { previousPathname } = useContext(AppContext)
+  let router = useRouter();
+  let { previousPathname } = useContext(AppContext);
 
   return (
     <Container className="mt-16 lg:mt-32">
@@ -66,5 +66,5 @@ export function ArticleLayout({
         </div>
       </div>
     </Container>
-  )
+  );
 }

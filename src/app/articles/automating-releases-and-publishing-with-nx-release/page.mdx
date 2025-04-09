@@ -1,8 +1,8 @@
-import { ArticleLayout } from '@/components/ArticleLayout'
-import Image from 'next/image'
-import mainPicture from './main-picture.png'
-import npmPage from './npm-page.png'
-import untitled from './untitled.png'
+import { ArticleLayout } from '@/components/ArticleLayout';
+import Image from 'next/image';
+import mainPicture from './main-picture.png';
+import npmPage from './npm-page.png';
+import untitled from './untitled.png';
 
 export const article = {
   author: 'Igor Katsuba',
@@ -10,14 +10,14 @@ export const article = {
   title: 'Automating Releases and Publishing with Nx Release',
   description:
     'I have been using Nx to start all my projects for a long time—from services and applications to a set of different libraries. Nx provides many convenient and high-level tools for efficient monorepo management. However, one problem has been haunting me for a long time—releasing and publishing libraries. Each time, I had to devise and try to implement another workaround that excluded the errors from the previous one. However, each new solution usually had its own drawbacks.',
-}
+};
 
 export const metadata = {
   title: article.title,
   description: article.description,
-}
+};
 
-export default (props) => <ArticleLayout article={article} {...props} />
+export default (props) => <ArticleLayout article={article} {...props} />;
 
 <Image
   src={mainPicture}
@@ -179,7 +179,7 @@ npm i @commitlint/cli @commitlint/config-angular @commitlint/config-nx-scopes @c
 Then add `commitlint.config.js` and configure the messages:
 
 ```javascript
-module.exports = { extends: ['@commitlint/config-conventional'] }
+module.exports = { extends: ['@commitlint/config-conventional'] };
 ```
 
 Then add the `.husky/commit-msg` file:

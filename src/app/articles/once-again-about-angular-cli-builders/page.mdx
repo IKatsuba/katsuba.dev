@@ -1,6 +1,6 @@
-import { ArticleLayout } from '@/components/ArticleLayout'
-import Image from 'next/image'
-import mainImage from './main.png'
+import { ArticleLayout } from '@/components/ArticleLayout';
+import Image from 'next/image';
+import mainImage from './main.png';
 
 export const article = {
   author: 'Igor Katsuba',
@@ -8,14 +8,14 @@ export const article = {
   title: 'How to stop being afraid and create your own Angular CLI Builder',
   description:
     'Angular CLI v8.0.0 brought us a stable CLI Builders API, which allows you to customize, replace, or even create new CLI commands',
-}
+};
 
 export const metadata = {
   title: article.title,
   description: article.description,
-}
+};
 
-export default (props) => <ArticleLayout article={article} {...props} />
+export default (props) => <ArticleLayout article={article} {...props} />;
 
 <Image src={mainImage} alt="Main" />
 
@@ -158,14 +158,14 @@ export function runStepper(
       success: true,
     })),
     catchError((error) => {
-      return of({ error: error.toString(), success: false })
+      return of({ error: error.toString(), success: false });
     }),
-  )
+  );
 }
 
-export const StepperBuilder = createBuilder(runStepper)
+export const StepperBuilder = createBuilder(runStepper);
 
-export default StepperBuilder
+export default StepperBuilder;
 ```
 
 Note that the type of the first argument of the `runStepper` function is the same `Schema` from the configuration specification above. The function returns `Observable<BuilderOutput>`.
@@ -177,7 +177,7 @@ Next, we will implement the `buildSteps` function, which will be responsible for
 function buildSteps(config: Schema, context: BuilderContext): Observable<any> {
   return concat(
     config.steps.map((step) => buildStep(step, config.targets, context)),
-  )
+  );
 }
 ```
 
