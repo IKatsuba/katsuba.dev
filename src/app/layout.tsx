@@ -9,8 +9,7 @@ import Script from 'next/script';
 export const metadata: Metadata = {
   title: {
     template: '%s - Igor Katsuba',
-    default:
-      'Igor Katsuba - Software Engineer, JS Enthusiast, Open Source Contributor',
+    default: 'Igor Katsuba - Software Engineer, JS Enthusiast, Open Source Contributor',
   },
   description:
     'I’m Igor, a software engineer based in Limassol, Cyprus. I’m the biggest fan of JS and open source.',
@@ -21,11 +20,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="h-full antialiased" suppressHydrationWarning>
       <body className="flex h-full bg-zinc-50 dark:bg-black">

@@ -19,43 +19,73 @@ export default (props) => <ArticleLayout article={article} {...props} />;
 
 <Image src={mainImage} alt="Main" />
 
-Hello everyone! 🌟 This is the first part of [the previously announced series](./micro-frontend-architecture) of posts about an application with a micro-frontend architecture. Not everyone will have the same needs, but I hope everyone will find interesting information 📚.
+Hello everyone! 🌟 This is the first part of
+[the previously announced series](./micro-frontend-architecture) of posts about an application with
+a micro-frontend architecture. Not everyone will have the same needs, but I hope everyone will find
+interesting information 📚.
 
-So, let’s get started. We’ll be talking about the architecture of the front-end part of a CRM system.
+So, let’s get started. We’ll be talking about the architecture of the front-end part of a CRM
+system.
 
 ## **What is a CRM? 🤔**
 
-CRM functions as a centralized task dispatcher for our agents in our company. Imagine a high-tech office assistant that distributes tasks among employees. When an agent logs into the system, this assistant starts directing tasks to them — calls from clients, chat questions, or tasks to call potential clients. Thus, the agent always knows what to do and can focus on interacting with clients instead of searching for what to start with. CRM here is a smart tool that helps efficiently organize customer service, ensuring every query is heard, and every need is met 🎯.
+CRM functions as a centralized task dispatcher for our agents in our company. Imagine a high-tech
+office assistant that distributes tasks among employees. When an agent logs into the system, this
+assistant starts directing tasks to them — calls from clients, chat questions, or tasks to call
+potential clients. Thus, the agent always knows what to do and can focus on interacting with clients
+instead of searching for what to start with. CRM here is a smart tool that helps efficiently
+organize customer service, ensuring every query is heard, and every need is met 🎯.
 
 ## **Main application requirements 🔍**
 
-I won’t delve into functional and non-functional requirements in detail but will highlight those that significantly affect the high-level architecture of the application:
+I won’t delve into functional and non-functional requirements in detail but will highlight those
+that significantly affect the high-level architecture of the application:
 
-1.  **Scalability and long-term development.** The application should be designed to easily adapt to changes in business processes and scale according to growing needs.
-2.  **Support for various tasks.** CRM should handle different types of tasks (incoming calls, chats, client call-outs), with each type of task managed by a separate team.
+1.  **Scalability and long-term development.** The application should be designed to easily adapt to
+    changes in business processes and scale according to growing needs.
+2.  **Support for various tasks.** CRM should handle different types of tasks (incoming calls,
+    chats, client call-outs), with each type of task managed by a separate team.
 3.  **Independence of releases by different teams.**
-4.  **Fast integration of new features.** The application’s architecture should support flexible and quick addition of new functions.
-5.  **Conducting experiments.** The business should conduct quick experiments with new ideas and functions, and the CRM architecture should support A/B testing and be ready for rapid iterations.
+4.  **Fast integration of new features.** The application’s architecture should support flexible and
+    quick addition of new functions.
+5.  **Conducting experiments.** The business should conduct quick experiments with new ideas and
+    functions, and the CRM architecture should support A/B testing and be ready for rapid
+    iterations.
 
-Implementation of the backend, authorization of requests, task balancing, and similar aspects will be outside the scope of this series of posts.
+Implementation of the backend, authorization of requests, task balancing, and similar aspects will
+be outside the scope of this series of posts.
 
 ## **Key architectural and process decisions 🏗**
 
 Here’s what the high-level design of such a system might look like:
 
-📦 **Main application container.** Serves as the “skeleton” for the entire application, managing authentication, navigation, and user session state. Responsible for loading the appropriate micro-frontends based on user actions and access rights.
+📦 **Main application container.** Serves as the “skeleton” for the entire application, managing
+authentication, navigation, and user session state. Responsible for loading the appropriate
+micro-frontends based on user actions and access rights.
 
-🧩 **Microfrontends for each type of task.** Incoming calls, chats with clients, outgoing calls, etc., are developed as separate micro-frontends, each managed by a corresponding team. However, in the layered architecture we’ve adopted, any functionality part can be made into a microfront.
+🧩 **Microfrontends for each type of task.** Incoming calls, chats with clients, outgoing calls,
+etc., are developed as separate micro-frontends, each managed by a corresponding team. However, in
+the layered architecture we’ve adopted, any functionality part can be made into a microfront.
 
-📚 **Layered architecture.** We’ve based our design on the FSD idea, where the entire application is divided into several layers. There are clear dependencies and restrictions between layers. This ensures low code coupling, modularity, and independence of each new feature introduced. This directly affects the extendibility and speed of feature integration.
+📚 **Layered architecture.** We’ve based our design on the FSD idea, where the entire application is
+divided into several layers. There are clear dependencies and restrictions between layers. This
+ensures low code coupling, modularity, and independence of each new feature introduced. This
+directly affects the extendibility and speed of feature integration.
 
-🤝 **Monorepo** for the entire application with all products. This allows sharing of all developments between products and common CI/CD pipelines and makes it much easier to conduct integration cross-checks. At one point, we tried to move one of the products to a separate repo but faced numerous problems and abandoned the idea.
+🤝 **Monorepo** for the entire application with all products. This allows sharing of all
+developments between products and common CI/CD pipelines and makes it much easier to conduct
+integration cross-checks. At one point, we tried to move one of the products to a separate repo but
+faced numerous problems and abandoned the idea.
 
-🔄 **CI/CD and TBD.** We firmly decided to follow these practices. We considered other options, but having different team release plans makes any other option almost impossible. Following TBD naturally allows for conducting A/B tests and quick experiments.
+🔄 **CI/CD and TBD.** We firmly decided to follow these practices. We considered other options, but
+having different team release plans makes any other option almost impossible. Following TBD
+naturally allows for conducting A/B tests and quick experiments.
 
 ## **Summary ✨**
 
-We have defined the application and the requirements that fundamentally influence the decisions made. In the next posts, we will discuss each requirement separately and in detail, but first, let’s discuss the technical stack. Stay tuned!🚀📈
+We have defined the application and the requirements that fundamentally influence the decisions
+made. In the next posts, we will discuss each requirement separately and in detail, but first, let’s
+discuss the technical stack. Stay tuned!🚀📈
 
 ---
 
@@ -67,4 +97,5 @@ No worries, here are the links to the next installments in our series:
 2. [Micro-frontend Architecture. Part 3.](./micro-frontend-architecture-part-3)
 3. [Micro-frontend Architecture. Part 4.](./micro-frontend-architecture-part-4)
 
-🔗 Be sure to catch up to get a comprehensive understanding of micro-frontend architecture and how we are integrating it into our systems. Stay tuned for more insights and in-depth discussions! 🚀
+🔗 Be sure to catch up to get a comprehensive understanding of micro-frontend architecture and how
+we are integrating it into our systems. Stay tuned for more insights and in-depth discussions! 🚀

@@ -4,10 +4,7 @@ import { Card } from '@/components/Card';
 import { Section } from '@/components/Section';
 import { SimpleLayout } from '@/components/SimpleLayout';
 
-function SpeakingSection({
-  children,
-  ...props
-}: React.ComponentPropsWithoutRef<typeof Section>) {
+function SpeakingSection({ children, ...props }: React.ComponentPropsWithoutRef<typeof Section>) {
   return (
     <Section {...props}>
       <div className="space-y-16">{children}</div>
@@ -42,8 +39,7 @@ function Appearance({
 
 export const metadata: Metadata = {
   title: 'Speaking',
-  description:
-    'I’ve spoken at events all around the world and been interviewed for many podcasts.',
+  description: 'I’ve spoken at events all around the world and been interviewed for many podcasts.',
 };
 
 export default function Speaking() {

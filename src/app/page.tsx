@@ -5,12 +5,7 @@ import clsx from 'clsx';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { Container } from '@/components/Container';
-import {
-  GitHubIcon,
-  InstagramIcon,
-  LinkedInIcon,
-  XIcon,
-} from '@/components/SocialIcons';
+import { GitHubIcon, InstagramIcon, LinkedInIcon, XIcon } from '@/components/SocialIcons';
 import logoTinkoff from '@/images/logos/tinkoff.png';
 import logoFixGroup from '@/images/logos/fix.png';
 import logoPlata from '@/images/logos/plata.png';
@@ -87,9 +82,7 @@ function ArrowDownIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
 function Article({ article }: { article: ArticleWithSlug }) {
   return (
     <Card as="article">
-      <Card.Title href={`/articles/${article.slug}`}>
-        {article.title}
-      </Card.Title>
+      <Card.Title href={`/articles/${article.slug}`}>{article.title}</Card.Title>
       <Card.Eyebrow as="time" dateTime={article.date} decorate>
         {formatDate(article.date)}
       </Card.Eyebrow>
@@ -151,10 +144,8 @@ interface Role {
 }
 
 function Role({ role }: { role: Role }) {
-  let startLabel =
-    typeof role.start === 'string' ? role.start : role.start.label;
-  let startDate =
-    typeof role.start === 'string' ? role.start : role.start.dateTime;
+  let startLabel = typeof role.start === 'string' ? role.start : role.start.label;
+  let startDate = typeof role.start === 'string' ? role.start : role.start.dateTime;
 
   let endLabel = typeof role.end === 'string' ? role.end : role.end.label;
   let endDate = typeof role.end === 'string' ? role.end : role.end.dateTime;
@@ -162,12 +153,7 @@ function Role({ role }: { role: Role }) {
   return (
     <li className="flex gap-4">
       <div className="relative mt-1 flex h-10 w-10 flex-none items-center justify-center rounded-full ring-1 shadow-md shadow-zinc-800/5 ring-zinc-900/5 dark:border dark:border-zinc-700/50 dark:bg-zinc-800 dark:ring-0">
-        <Image
-          src={role.logo}
-          alt=""
-          className="h-7 w-7 rounded-full"
-          unoptimized
-        />
+        <Image src={role.logo} alt="" className="h-7 w-7 rounded-full" unoptimized />
       </div>
       <dl className="flex flex-auto flex-wrap gap-x-2">
         <dt className="sr-only">Company</dt>
@@ -175,16 +161,13 @@ function Role({ role }: { role: Role }) {
           {role.company}
         </dd>
         <dt className="sr-only">Role</dt>
-        <dd className="text-xs text-zinc-500 dark:text-zinc-400">
-          {role.title}
-        </dd>
+        <dd className="text-xs text-zinc-500 dark:text-zinc-400">{role.title}</dd>
         <dt className="sr-only">Date</dt>
         <dd
           className="ml-auto text-xs text-zinc-400 dark:text-zinc-500"
           aria-label={`${startLabel} until ${endLabel}`}
         >
-          <time dateTime={startDate}>{startLabel}</time>{' '}
-          <span aria-hidden="true">—</span>{' '}
+          <time dateTime={startDate}>{startLabel}</time> <span aria-hidden="true">—</span>{' '}
           <time dateTime={endDate}>{endLabel}</time>
         </dd>
       </dl>
@@ -235,12 +218,7 @@ function Resume() {
           <Role key={roleIndex} role={role} />
         ))}
       </ol>
-      <Button
-        href="/resume.pdf"
-        download
-        variant="secondary"
-        className="group mt-6 w-full"
-      >
+      <Button href="/resume.pdf" download variant="secondary" className="group mt-6 w-full">
         Download CV
         <ArrowDownIcon className="h-4 w-4 stroke-zinc-400 transition group-active:stroke-zinc-600 dark:group-hover:stroke-zinc-50 dark:group-active:stroke-zinc-50" />
       </Button>
@@ -249,13 +227,7 @@ function Resume() {
 }
 
 function Photos() {
-  let rotations = [
-    'rotate-2',
-    '-rotate-2',
-    'rotate-2',
-    'rotate-2',
-    '-rotate-2',
-  ];
+  let rotations = ['rotate-2', '-rotate-2', 'rotate-2', 'rotate-2', '-rotate-2'];
 
   return (
     <div className="mt-16 sm:mt-20">
@@ -286,18 +258,15 @@ export default async function Home() {
 
   console.log(process.env.CAL_API_KEY);
 
-  const response = await fetch(
-    'https://api.cal.com/v2/event-types?username=katsuba',
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.CAL_API_KEY}`,
-        'cal-api-version': '2024-06-14',
-      },
-      next: {
-        revalidate: 60 * 60, // 1 hour
-      },
+  const response = await fetch('https://api.cal.com/v2/event-types?username=katsuba', {
+    headers: {
+      Authorization: `Bearer ${process.env.CAL_API_KEY}`,
+      'cal-api-version': '2024-06-14',
     },
-  );
+    next: {
+      revalidate: 60 * 60, // 1 hour
+    },
+  });
 
   const json = await response.json();
 
@@ -317,8 +286,8 @@ export default async function Home() {
             Software Engineer, JS Enthusiast, Open Source Contributor
           </h1>
           <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            I&apos;m Igor, a software engineer based in Limassol, Cyprus.
-            I&apos;m the biggest fan of JS and open source.
+            I&apos;m Igor, a software engineer based in Limassol, Cyprus. I&apos;m the biggest fan
+            of JS and open source.
           </p>
           <div className="mt-6 flex gap-6">
             <SocialLink
@@ -363,8 +332,8 @@ export default async function Home() {
             Book a consultation
           </h2>
           <p className="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-            Choose a service that best fits your needs. All consultations are
-            conducted via video call.
+            Choose a service that best fits your needs. All consultations are conducted via video
+            call.
           </p>
         </div>
         <Booking services={services} />

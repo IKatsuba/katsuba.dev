@@ -19,14 +19,18 @@ export const metadata = {
 
 export default (props) => <ArticleLayout article={article} {...props} />;
 
-<Image
-  src={mainPicture}
-  alt="Automating Releases and Publishing with Nx Release"
-/>
+<Image src={mainPicture} alt="Automating Releases and Publishing with Nx Release" />
 
-I have been using Nx to start all my projects for a long time—from services and applications to a set of different libraries. Nx provides many convenient and high-level tools for efficient monorepo management. However, one problem has been haunting me for a long time—releasing and publishing libraries. Each time, I had to devise and try to implement another workaround that excluded the errors from the previous one. However, each new solution usually had its own drawbacks.
+I have been using Nx to start all my projects for a long time—from services and applications to a
+set of different libraries. Nx provides many convenient and high-level tools for efficient monorepo
+management. However, one problem has been haunting me for a long time—releasing and publishing
+libraries. Each time, I had to devise and try to implement another workaround that excluded the
+errors from the previous one. However, each new solution usually had its own drawbacks.
 
-But Nx 17.0 allowed us to release and publish packages out of the box! Of course, Nx Release has drawbacks, but at least it's an out-of-the-box solution, and (spoiler) it works great on GitHub. Today, we will look at setting up Nx Release using the example of the young micro-frontend framework [Mexo](https://github.com/platacard/mexo/).
+But Nx 17.0 allowed us to release and publish packages out of the box! Of course, Nx Release has
+drawbacks, but at least it's an out-of-the-box solution, and (spoiler) it works great on GitHub.
+Today, we will look at setting up Nx Release using the example of the young micro-frontend framework
+[Mexo](https://github.com/platacard/mexo/).
 
 ## Setting up Nx
 
@@ -51,12 +55,19 @@ The first step is to add Nx Release settings to `nx.json`:
 
 Let's break down what we have configured here:
 
-- `**projects**` — filter for projects to be published. In our case, these are all the publishable projects in the `libs` directory.
-- **`version.conventionalCommits`** — setting to enable automatic release based on commit message conventions.
-- **`changelog.workspaceChangelog.file`** — enable/disable writing changelog to a file. The changelog can be written to a file at the workspace level or for each publishable library.
-- `**changelog.workspaceChangelog.createRelease**` — there are few permissible values — `github` or `false`. When set to `github`, a release will be created on GitHub with the attached changelog.
+- `**projects**` — filter for projects to be published. In our case, these are all the publishable
+  projects in the `libs` directory.
+- **`version.conventionalCommits`** — setting to enable automatic release based on commit message
+  conventions.
+- **`changelog.workspaceChangelog.file`** — enable/disable writing changelog to a file. The
+  changelog can be written to a file at the workspace level or for each publishable library.
+- `**changelog.workspaceChangelog.createRelease**` — there are few permissible values — `github` or
+  `false`. When set to `github`, a release will be created on GitHub with the attached changelog.
 
-By default, Nx publishes packages from the package root without building. In our case, all packages must be built first and publish the built artifacts only then. To do this, we will make some more changes to `nx.json`. In the `targetDefaults` section, we will add a configuration that modifies the publishing process.
+By default, Nx publishes packages from the package root without building. In our case, all packages
+must be built first and publish the built artifacts only then. To do this, we will make some more
+changes to `nx.json`. In the `targetDefaults` section, we will add a configuration that modifies the
+publishing process.
 
 ```json
     {
@@ -72,13 +83,17 @@ By default, Nx publishes packages from the package root without building. In our
     }
 ```
 
-`nx-release-publish` is a reserved command for publishing libraries. Using the `"dependsOn": ["build"]` setting, we indicate that the `build` command should be run immediately before publishing. We also set `options.packageRoot` to publish from the build artifacts.
+`nx-release-publish` is a reserved command for publishing libraries. Using the
+`"dependsOn": ["build"]` setting, we indicate that the `build` command should be run immediately
+before publishing. We also set `options.packageRoot` to publish from the build artifacts.
 
-This configuration allowed us to automatically release and publish libraries based on commit messages. Let's move on to setting up GitHub Actions.
+This configuration allowed us to automatically release and publish libraries based on commit
+messages. Let's move on to setting up GitHub Actions.
 
 ## Release and Publishing in CI
 
-First, let's create a workflow running when changes are pushed to the main. Create a file `.github/workflows/ci.yml` with the following content:
+First, let's create a workflow running when changes are pushed to the main. Create a file
+`.github/workflows/ci.yml` with the following content:
 
 ```yml
 name: CI
@@ -113,7 +128,11 @@ The most important line in this file is:
 npx nx release --skip-publish
 ```
 
-When this command is called, Nx will find the previous version and check if a new release can be created. If a release should occur, Nx will write the new versions to `package.json` and make a service commit with version fixation. Nx will then add a version tag to this commit and create a release on GitHub. The `--skip-publish` option skips package publishing. We will move the package publishing to a separate workflow.
+When this command is called, Nx will find the previous version and check if a new release can be
+created. If a release should occur, Nx will write the new versions to `package.json` and make a
+service commit with version fixation. Nx will then add a version tag to this commit and create a
+release on GitHub. The `--skip-publish` option skips package publishing. We will move the package
+publishing to a separate workflow.
 
 To do this, create a file `.github/workflows/publish.yml`:
 
@@ -156,19 +175,25 @@ jobs:
           NPM_CONFIG_PROVENANCE: true
 ```
 
-Note that this workflow is triggered by creating a release, not a tag. A tag created from CI cannot physically trigger another workflow.
+Note that this workflow is triggered by creating a release, not a tag. A tag created from CI cannot
+physically trigger another workflow.
 
-The last command only triggers package publishing. The only thing you need to do for publishing to a public registry is to issue an Access Token and put it in the `NPM_ACCESS_TOKEN` secret.
+The last command only triggers package publishing. The only thing you need to do for publishing to a
+public registry is to issue an Access Token and put it in the `NPM_ACCESS_TOKEN` secret.
 
-For more information on `NPM_CONFIG_PROVENANCE`, you can read [here](https://docs.npmjs.com/generating-provenance-statements). In short, it adds a checkmark to your package page in the npm registry.
+For more information on `NPM_CONFIG_PROVENANCE`, you can read
+[here](https://docs.npmjs.com/generating-provenance-statements). In short, it adds a checkmark to
+your package page in the npm registry.
 
 <Image src={npmPage} alt="npm page" />
 
 ## Commit Message Validation
 
-To create releases correctly, you need to strictly follow commit message conventions. We use Husky and commitlint for this.
+To create releases correctly, you need to strictly follow commit message conventions. We use Husky
+and commitlint for this.
 
-Husky allows us to use a pre-commit hook. And commitlint will validate the message and prevent the commit if the convention is not followed.
+Husky allows us to use a pre-commit hook. And commitlint will validate the message and prevent the
+commit if the convention is not followed.
 
 First, set up and install commitlint:
 
@@ -207,25 +232,41 @@ And install husky:
 npm i husky -D
 ```
 
-Now, a developer must follow the commit message conventions every time. Thanks to this, releases will always correspond to the changes, and as a bonus, a beautiful changelog will be generated.
+Now, a developer must follow the commit message conventions every time. Thanks to this, releases
+will always correspond to the changes, and as a bonus, a beautiful changelog will be generated.
 
-You can find relevant plugins in the IDE for hints on message format according to your configuration. For example, below is a screenshot of two plugins for WebStorm:
+You can find relevant plugins in the IDE for hints on message format according to your
+configuration. For example, below is a screenshot of two plugins for WebStorm:
 
 <Image src={untitled} alt="Untitled" />
 
 ## Disadvantages of Nx Release
 
-I am almost delighted with Nx Release as a versioning and publishing tool. I found two drawbacks for myself:
+I am almost delighted with Nx Release as a versioning and publishing tool. I found two drawbacks for
+myself:
 
-1.  All guides and development look like the release should happen on one of the developer's local machines, and only the publishing happens on the CI side.
-2.  It lacks integration with GitHub alternatives. For example, self-hosted Gitlab is often a source code hosting in companies of various sizes, and the lack of integration with it can be a serious obstacle to using Nx Release.
+1.  All guides and development look like the release should happen on one of the developer's local
+    machines, and only the publishing happens on the CI side.
+2.  It lacks integration with GitHub alternatives. For example, self-hosted Gitlab is often a source
+    code hosting in companies of various sizes, and the lack of integration with it can be a serious
+    obstacle to using Nx Release.
 
 In general, I have no major complaints about the tool.
 
 ## Conclusion
 
-Nx Release offers a powerful and convenient way to automate the release and publication of packages in monorepos. With support for commit message conventions, automatic release creation, and GitHub integration, developers can save a significant amount of time and minimize errors related to version management. By setting up all the necessary processes, we can be sure that each release will accurately reflect code changes, and package publishing will occur without issues.
+Nx Release offers a powerful and convenient way to automate the release and publication of packages
+in monorepos. With support for commit message conventions, automatic release creation, and GitHub
+integration, developers can save a significant amount of time and minimize errors related to version
+management. By setting up all the necessary processes, we can be sure that each release will
+accurately reflect code changes, and package publishing will occur without issues.
 
-Despite a few drawbacks, such as insufficient documentation for CI/CD setup and limited integration with other source code management platforms, Nx Release remains one of the best solutions for version management and package publishing in monorepos. It significantly simplifies the development process and improves product quality.
+Despite a few drawbacks, such as insufficient documentation for CI/CD setup and limited integration
+with other source code management platforms, Nx Release remains one of the best solutions for
+version management and package publishing in monorepos. It significantly simplifies the development
+process and improves product quality.
 
-Automating release and publication with Nx Release makes developers' work more productive and efficient, allowing them to focus on writing code rather than routine tasks. This ensures that projects maintain high standards and deliver consistent updates without the usual headaches associated with manual release processes.
+Automating release and publication with Nx Release makes developers' work more productive and
+efficient, allowing them to focus on writing code rather than routine tasks. This ensures that
+projects maintain high standards and deliver consistent updates without the usual headaches
+associated with manual release processes.

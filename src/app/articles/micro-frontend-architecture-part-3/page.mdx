@@ -19,49 +19,86 @@ export default (props) => <ArticleLayout article={article} {...props} />;
 
 <Image src={mainImage} alt="Main" />
 
-Hello everyone! Welcome to the third part of our journey into micro-frontend architecture. After delving into architectural decisions and the technical stack, it’s time to explore layered architecture in practice, using our CRM application as an example.
+Hello everyone! Welcome to the third part of our journey into micro-frontend architecture. After
+delving into architectural decisions and the technical stack, it’s time to explore layered
+architecture in practice, using our CRM application as an example.
 
 ## **What is Layered Architecture?**
 
-Layered architecture is a development approach that suggests dividing an application into multiple layers. These layers are usually organized by responsibility and interaction with other layers, facilitating a clear separation of duties and simplifying code maintenance. Typically, layers have dependency constraints to prevent tangled code dependencies.
+Layered architecture is a development approach that suggests dividing an application into multiple
+layers. These layers are usually organized by responsibility and interaction with other layers,
+facilitating a clear separation of duties and simplifying code maintenance. Typically, layers have
+dependency constraints to prevent tangled code dependencies.
 
-For instance, Nx offers layered architecture through different types of libraries within a single monorepo: feature, UI, data-access library, and utils. However, the official documentation does not specify any restrictions or rules for these layers. Therefore, we were inspired by another example of layered architecture — [FSD](https://feature-sliced.design/). We adopted only the concept of layers and their interrelations, while FSD offers a deeper separation, which you can read about in its documentation.
+For instance, Nx offers layered architecture through different types of libraries within a single
+monorepo: feature, UI, data-access library, and utils. However, the official documentation does not
+specify any restrictions or rules for these layers. Therefore, we were inspired by another example
+of layered architecture — [FSD](https://feature-sliced.design/). We adopted only the concept of
+layers and their interrelations, while FSD offers a deeper separation, which you can read about in
+its documentation.
 
 ## **Layers**
 
 Let’s take a look at the layers we identified in our CRM:
 
-- **Core layer** — a set of “dumb” components, services, directives, and utility functions that can be used anywhere in the application and beyond.
+- **Core layer** — a set of “dumb” components, services, directives, and utility functions that can
+  be used anywhere in the application and beyond.
 - **Features** — features are responsible for business logic and interaction with the API.
 - **Blocks** — a composition of features responsible for data display and user interaction.
-- **Pages or tasks** — application pages or CRM tasks, which handle internal routing and feature composition.
-- **Application layer** — the main application component responsible for configurations and initial routing.
+- **Pages or tasks** — application pages or CRM tasks, which handle internal routing and feature
+  composition.
+- **Application layer** — the main application component responsible for configurations and initial
+  routing.
 
-It’s worth mentioning that we work within a monorepo that can contain more than one micro frontend. Each micro-frontend is a product, with a specific team responsible for one or several such products. To separate products, we identified scopes, usually correlating one scope per product.
+It’s worth mentioning that we work within a monorepo that can contain more than one micro frontend.
+Each micro-frontend is a product, with a specific team responsible for one or several such products.
+To separate products, we identified scopes, usually correlating one scope per product.
 
 ## **Dependency Constraints**
 
-I listed the layers from the bottom up and ended with the application layer for a reason. This order helps trace dependencies between them. Each higher layer can depend only on the one below it. Thus, the feature layer can depend only on blocks, the application layer on pages, etc. Dependencies within the same layer are also not allowed, except for the core layer. Any layer can depend on the core, and core components can depend on other core components.
+I listed the layers from the bottom up and ended with the application layer for a reason. This order
+helps trace dependencies between them. Each higher layer can depend only on the one below it. Thus,
+the feature layer can depend only on blocks, the application layer on pages, etc. Dependencies
+within the same layer are also not allowed, except for the core layer. Any layer can depend on the
+core, and core components can depend on other core components.
 
-It’s important to remember scopes. A scope encompasses all dependency branches of a product. If these branches intersect, the intersections should attain a shared scope status. Creating shared scopes is only done with the full consent of the code owners, as the “shared” status automatically makes the entire branch common.
+It’s important to remember scopes. A scope encompasses all dependency branches of a product. If
+these branches intersect, the intersections should attain a shared scope status. Creating shared
+scopes is only done with the full consent of the code owners, as the “shared” status automatically
+makes the entire branch common.
 
 ## **Advantages of Layered Architecture**
 
-**Modularity and Reusability.** Layered architecture facilitates the separation of functionality into distinct components, easing code reuse. This allows developers to create independent modules that can be reused in different parts of the application or other products.
+**Modularity and Reusability.** Layered architecture facilitates the separation of functionality
+into distinct components, easing code reuse. This allows developers to create independent modules
+that can be reused in different parts of the application or other products.
 
-**Simplified Maintenance and Expansion.** Dividing the application into layers makes the code more structured and understandable, simplifying maintenance and adding new functionality, as developers can easily locate and modify relevant parts of the application without affecting the rest of the code.
+**Simplified Maintenance and Expansion.** Dividing the application into layers makes the code more
+structured and understandable, simplifying maintenance and adding new functionality, as developers
+can easily locate and modify relevant parts of the application without affecting the rest of the
+code.
 
-**Improved Scalability.** The clear separation of responsibilities among different layers makes the application more scalable.
+**Improved Scalability.** The clear separation of responsibilities among different layers makes the
+application more scalable.
 
-**Faster Onboarding for New Developers.** Due to strict rules, the project structure never changes. Developers can quickly understand which components perform which functions and how they interact with each other.
+**Faster Onboarding for New Developers.** Due to strict rules, the project structure never changes.
+Developers can quickly understand which components perform which functions and how they interact
+with each other.
 
 ## **Summary**🌟
 
-Adopting layered architecture in our project has brought us significant advantages: modularity, simplified maintenance and expansion, improved scalability, and faster onboarding of new developers. Dependency constraints between layers and within scopes ensure clarity and order in the project structure, allowing us to manage product complexity and quality effectively.
+Adopting layered architecture in our project has brought us significant advantages: modularity,
+simplified maintenance and expansion, improved scalability, and faster onboarding of new developers.
+Dependency constraints between layers and within scopes ensure clarity and order in the project
+structure, allowing us to manage product complexity and quality effectively.
 
 ## **What’s Next?**
 
-In the next part, we’ll take a closer look at the tools and practices we use to align our architecture with the principles of layered design. We’ll show how Nx helps us manage dependencies between layers, how we use linting to maintain order in the monorepo, and how automation helps us maintain a high code quality standard. Join us to learn more about the technical aspects of implementing layered architecture in a large-scale project!
+In the next part, we’ll take a closer look at the tools and practices we use to align our
+architecture with the principles of layered design. We’ll show how Nx helps us manage dependencies
+between layers, how we use linting to maintain order in the monorepo, and how automation helps us
+maintain a high code quality standard. Join us to learn more about the technical aspects of
+implementing layered architecture in a large-scale project!
 
 ---
 
@@ -73,4 +110,5 @@ No worries, here are the links to the other installments in our series:
 2. [Micro-frontend Architecture. Part 2.](./micro-frontend-architecture-part-2)
 3. [Micro-frontend Architecture. Part 4.](./micro-frontend-architecture-part-4)
 
-🔗 Be sure to catch up to get a comprehensive understanding of micro-frontend architecture and how we are integrating it into our systems. Stay tuned for more insights and in-depth discussions! 🚀
+🔗 Be sure to catch up to get a comprehensive understanding of micro-frontend architecture and how
+we are integrating it into our systems. Stay tuned for more insights and in-depth discussions! 🚀

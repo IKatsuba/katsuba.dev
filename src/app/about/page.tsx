@@ -4,12 +4,7 @@ import Link from 'next/link';
 import clsx from 'clsx';
 
 import { Container } from '@/components/Container';
-import {
-  GitHubIcon,
-  InstagramIcon,
-  LinkedInIcon,
-  XIcon,
-} from '@/components/SocialIcons';
+import { GitHubIcon, InstagramIcon, LinkedInIcon, XIcon } from '@/components/SocialIcons';
 import portraitImage from '@/images/portrait.jpg';
 
 function SocialLink({
@@ -49,8 +44,7 @@ function MailIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
 
 export const metadata: Metadata = {
   title: 'About',
-  description:
-    'I’m Igor Katsuba. I live in Limassol, Cyprus, where I design the future.',
+  description: 'I’m Igor Katsuba. I live in Limassol, Cyprus, where I design the future.',
 };
 
 export default function About() {
@@ -69,23 +63,22 @@ export default function About() {
         </div>
         <div className="lg:order-first lg:row-span-2">
           <h1 className="text-4xl font-bold tracking-tight text-zinc-800 sm:text-5xl dark:text-zinc-100">
-            I’m Igor Katsuba. I live in Limassol, Cyprus, where I create
-            software.
+            I’m Igor Katsuba. I live in Limassol, Cyprus, where I create software.
           </h1>
           <div className="mt-6 space-y-7 text-base text-zinc-600 dark:text-zinc-400">
             <p>
-              I’ve loved making things for as long as I can remember, but wrote
-              my first program when I was 24 years old. It was so much fun that
-              I decided to become a software engineer.
+              I’ve loved making things for as long as I can remember, but wrote my first program
+              when I was 24 years old. It was so much fun that I decided to become a software
+              engineer.
             </p>
             <p>
-              The only thing I loved more than my job was my family. I’m married
-              and have two beautiful kids. All of them are my motivation to wake
-              up every day and build something new.
+              The only thing I loved more than my job was my family. I’m married and have two
+              beautiful kids. All of them are my motivation to wake up every day and build something
+              new.
             </p>
             <p>
-              Today, I’m not only a software engineer, but also an indie hacker.
-              Check out my projects on{' '}
+              Today, I’m not only a software engineer, but also an indie hacker. Check out my
+              projects on{' '}
               <a href="/projects" className="text-teal-500">
                 katsuba.dev/projects
               </a>
@@ -95,10 +88,7 @@ export default function About() {
         </div>
         <div className="lg:pl-20">
           <ul role="list">
-            <SocialLink
-              href="https://x.com/intent/follow?screen_name=katsuba_igor"
-              icon={XIcon}
-            >
+            <SocialLink href="https://x.com/intent/follow?screen_name=katsuba_igor" icon={XIcon}>
               Follow on X
             </SocialLink>
             <SocialLink
@@ -108,11 +98,7 @@ export default function About() {
             >
               Follow on Instagram
             </SocialLink>
-            <SocialLink
-              href="https://github.com/IKatsuba"
-              icon={GitHubIcon}
-              className="mt-4"
-            >
+            <SocialLink href="https://github.com/IKatsuba" icon={GitHubIcon} className="mt-4">
               Follow on GitHub
             </SocialLink>
             <SocialLink
