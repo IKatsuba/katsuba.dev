@@ -1,0 +1,258 @@
+import { ArticleLayout } from '@/components/ArticleLayout';
+import Image from 'next/image';
+import mainPicture from './hero.png';
+import agentList from './agent-list.png';
+import agentSwagger from './swagger-ui.png';
+import playground from './playground.png';
+
+export const article = {
+  author: 'Igor Katsuba',
+  date: '2025-04-09',
+  title: 'Building AI Agents with Mastra and Deno',
+  description:
+    'I discovered Mastra — a TypeScript framework for building AI agents. Essentially, it’s an SDK for creating intelligent systems with a powerful and user-friendly high-level abstraction.',
+};
+
+export const metadata = { title: article.title, description: article.description };
+
+export default (props) => <ArticleLayout article={article} {...props} />;
+
+<Image src={mainPicture} alt="Building AI Agents with Mastra and Deno" />
+
+Recently, I discovered Mastra — a TypeScript framework for building AI agents. Essentially, it’s an
+SDK for creating intelligent systems with a powerful and user-friendly high-level abstraction.
+Mastra makes it easy to create advanced agents, RAG bots, work with memory, connect tools, and build
+flexible workflows.
+
+The key feature for me was that Mastra can run as a service and be interacted with via HTTP. In my
+project, I use a Mastra instance as an agent hub and connect different clients to it: a Telegram bot
+and a web chat. Both use the same agents with connected tools.
+
+In this article, I’ll show you how to get started with Mastra using Deno.
+
+---
+
+## Quick Intro to Deno
+
+Deno is a modern runtime for JavaScript and TypeScript, created by Ryan Dahl, the author of Node.js.
+It features: • Built-in TypeScript support • Secure-by-default permissions model (sandbox) • A clean
+module system without node_modules • Built-in tools for formatting, testing, and benchmarking
+
+I’m inspired by its “everything out of the box” philosophy. And recently, Deno also added support
+for npm packages — which makes integration with libraries like Mastra even easier.
+
+---
+
+In this example, we’ll build an agent that can search for npm packages and provide version
+information.
+
+## Step 1 — Set Up the Project
+
+Create a new project folder and set up deno.json:
+
+```bash
+mkdir deno-mastra && cd deno-mastra touch deno.json
+```
+
+Content of deno.json:
+
+```
+{
+  "nodeModulesDir": "auto",
+  "fmt": {
+    "singleQuote": true
+  },
+  "tasks": {
+    "dev": "mastra dev"
+  }
+}
+```
+
+The `"nodeModulesDir": "auto"` setting tells Deno to create node_modules only when needed — useful
+for certain dependencies. Let’s also create a `.gitignore`:
+
+```
+node_modules
+.env
+.mastra
+```
+
+Now install the necessary dependencies:
+
+```bash
+deno install npm:@ai-sdk/openai \
+ npm:@mastra/core \
+ npm:@mastra/memory \
+ npm:mastra \
+ npm:zod
+```
+
+Here’s what we’re installing:
+
+- `@ai-sdk/openai` — for connecting to OpenAI models
+- `@mastra/core` — core logic for agents
+- `@mastra/memory` — memory and storage support
+- `mastra` — CLI for running the Mastra server
+- `zod` — a library for input validation and schema definitions
+
+## Step 2 — Implementing Tools
+
+Agents need “tools” to interact with the outside world. We’ll create two:
+
+- `getPackageVersion` — fetch specific version info for a package
+- `searchPackages` — search for packages by keyword
+
+Create a file `src/mastra/tools/npm-registry.ts`:
+
+```typescript
+import { createTool } from '@mastra/core/tools';
+import { z } from 'zod';
+
+export const getPackageVersion = createTool({
+  id: 'getPackageVersion',
+  description: 'Get the version of a npm package',
+  inputSchema: z.object({
+    name: z.string().describe('Package name like "react" or "@angular/core"'),
+    version: z.string().describe('Version or tag like "18.2.0" or "latest"'),
+  }),
+  execute: async ({ context }) => {
+    const response = await fetch(
+      `https://registry.npmjs.org/${encodeURIComponent(context.name)}/${encodeURIComponent(context.version)}`,
+    );
+    return await response.json();
+  },
+});
+
+export const searchPackages = createTool({
+  id: 'searchPackages',
+  description: 'Search for npm packages',
+  inputSchema: z.object({ query: z.string().describe('Search term like "react" or "angular"') }),
+  execute: async ({ context }) => {
+    const response = await fetch(
+      `https://registry.npmjs.org/-/v1/search?text=${encodeURIComponent(context.query)}&size=10`,
+    );
+    return await response.json();
+  },
+});
+```
+
+## Step 3 — Setting Up Memory
+
+Create `src/mastra/agents/npm/memory.ts`:
+
+```typescript
+import { LibSQLStore } from '@mastra/core/storage/libsql';
+import { LibSQLVector } from '@mastra/core/vector/libsql';
+import { Memory } from '@mastra/memory';
+
+const storage = new LibSQLStore({ config: { url: 'file:./.mastra/memory.db' } });
+
+const vector = new LibSQLVector({ connectionUrl: 'file:./.mastra/vector.db' });
+
+export const memory = new Memory({ storage, vector });
+```
+
+We’re using SQLite via libSQL — the simplest way to set up message history and vector memory.
+
+## Step 4 — Creating the Agent
+
+First, define the agent’s instructions in `src/mastra/agents/npm/instructions.ts`:
+
+```typescript
+export const instructions = `
+You are a helpful npm assistant that provides accurate npm package information.
+
+Your primary function is to help users get npm package information. When responding:
+
+- Always ask for a package name if none is provided
+- If the package name isn’t in English, please translate it
+- Include relevant details like version, description, and dependencies
+- Keep responses concise but informative
+
+Use the getPackageVersion tool to fetch a specific version of an npm package. Use the searchPackages
+tool to search for npm packages.
+
+If you don't know which version of a package to use, use the latest tag. `;
+```
+
+Now create the agent in `src/mastra/agents/npm/agent.ts`:
+
+```typescript
+import { Agent } from '@mastra/core';
+import { memory } from './memory.ts';
+import { openai } from '@ai-sdk/openai';
+import { getPackageVersion, searchPackages } from '../../tools/npm-registry.ts';
+import { instructions } from './instructions.ts';
+
+export const npmAgent = new Agent({
+  name: 'NPM Agent',
+  instructions,
+  model: openai('gpt-4o-mini'),
+  tools: { getPackageVersion, searchPackages },
+  memory,
+});
+```
+
+## Step 5 — Running the Mastra Server
+
+Create `src/mastra/index.ts`:
+
+```typescript
+import { Mastra } from '@mastra/core';
+import { npmAgent } from './agents/npm/agent.ts';
+
+export const mastra = new Mastra({ agents: { npmAgent } });
+```
+
+Add a `.env` file to your project root:
+
+```
+OPENAI_API_KEY=sk-proj-...
+```
+
+Now start the server:
+
+```bash
+deno task dev
+```
+
+Test the agent from the terminal:
+
+```bash
+curl -X POST http://localhost:4111/api/agents/npmAgent/generate \
+ -H "Content-Type: application/json" \
+ -d '{"messages": ["react"]}'
+```
+
+If you get a detailed response — it’s working!
+
+## Sandbox and Swagger
+
+Open http://localhost:4111 in your browser — you’ll see a UI for interacting with agents:
+
+<Image src={agentList} alt="Agent List" />
+
+The UI is a playground for testing agents. Playground has a chat interface, where you can interact
+with the agent:
+
+<Image src={playground} alt="Playground" />
+
+There’s also Swagger documentation, where you can see all HTTP endpoints and test requests right
+from your browser.
+
+<Image src={agentSwagger} alt="Agent Swagger" />
+
+## Final Project
+
+You can find the full project here:
+
+👉 [github.com/IKatsuba/deno-mastra](https://github.com/IKatsuba/deno-mastra)
+
+## Conclusion
+
+Mastra is a powerful tool for building AI agents, and together with Deno, it becomes an even more
+convenient development platform. You can build, run, and test agents in one environment and connect
+them to any apps via HTTP API.
+
+In future articles, I’ll cover how to build and deploy Mastra servers across different platforms.
+Stay tuned!

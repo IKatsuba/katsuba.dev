@@ -2,13 +2,8 @@
   "singleQuote": true,
   "printWidth": 100,
   "overrides": [
-    {
-      "files": "*.md(x)?",
-      "options": {
-        "printWidth": 100,
-        "proseWrap": "always"
-      }
-    }
+    { "files": "*.md(x)?", "options": { "printWidth": 100, "proseWrap": "always" } },
+    { "files": "*.json", "options": { "printWidth": 80, "proseWrap": "always" } }
   ],
   "plugins": ["prettier-plugin-tailwindcss"],
   "tailwindStylesheet": "./src/styles/tailwind.css"
