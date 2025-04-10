@@ -19,10 +19,10 @@ export default (props) => <ArticleLayout article={article} {...props} />;
 
 <Image src={mainPicture} alt="Building AI Agents with Mastra and Deno" />
 
-Recently, I discovered Mastra — a TypeScript framework for building AI agents. Essentially, it’s an
-SDK for creating intelligent systems with a powerful and user-friendly high-level abstraction.
-Mastra makes it easy to create advanced agents, RAG bots, work with memory, connect tools, and build
-flexible workflows.
+Recently, I discovered [Mastra](https://mastra.io) — a TypeScript framework for building AI agents.
+Essentially, it’s an SDK for creating intelligent systems with a powerful and user-friendly
+high-level abstraction. Mastra makes it easy to create advanced agents, RAG bots, work with memory,
+connect tools, and build flexible workflows.
 
 The key feature for me was that Mastra can run as a service and be interacted with via HTTP. In my
 project, I use a Mastra instance as an agent hub and connect different clients to it: a Telegram bot
@@ -35,8 +35,13 @@ In this article, I’ll show you how to get started with Mastra using Deno.
 ## Quick Intro to Deno
 
 Deno is a modern runtime for JavaScript and TypeScript, created by Ryan Dahl, the author of Node.js.
-It features: • Built-in TypeScript support • Secure-by-default permissions model (sandbox) • A clean
-module system without node_modules • Built-in tools for formatting, testing, and benchmarking
+
+It features:
+
+- Built-in TypeScript support
+- Secure-by-default permissions model (sandbox)
+- A clean module system without node_modules
+- Built-in tools for formatting, testing, and benchmarking
 
 I’m inspired by its “everything out of the box” philosophy. And recently, Deno also added support
 for npm packages — which makes integration with libraries like Mastra even easier.
