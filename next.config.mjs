@@ -95,6 +95,11 @@ const nextConfig = {
         destination: '/articles/whats-new-in-npm-7',
         permanent: true,
       },
+      {
+        source: '/author/:author*',
+        destination: '/about',
+        permanent: true,
+      },
     ];
   },
 };
