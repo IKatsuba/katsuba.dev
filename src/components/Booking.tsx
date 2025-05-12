@@ -9,6 +9,8 @@ export function Booking({
     duration: string;
     price: string;
     calLink: string;
+    slug: string;
+    rawCost: number;
   }[];
 }) {
   return (

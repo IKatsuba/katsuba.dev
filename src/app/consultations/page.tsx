@@ -26,8 +26,20 @@ export default async function ArticlesIndex() {
     description: eventType.description,
     duration: `${eventType.lengthInMinutes}m`,
     price: `$${eventType.price / 100}`,
+    rawCost: eventType.price,
     calLink: `https://cal.com/katsuba/${eventType.slug}`,
-  }));
+    slug: eventType.slug,
+  })) as {
+    title: string;
+    description: string;
+    duration: string;
+    price: string;
+    rawCost: number;
+    calLink: string;
+    slug: string;
+  }[];
+
+  services.sort((a, b) => a.rawCost - b.rawCost);
 
   return (
     <SimpleLayout

@@ -270,13 +270,25 @@ export default async function Home() {
 
   const json = await response.json();
 
-  const services = json.data.map((eventType: any) => ({
-    title: eventType.title,
-    description: eventType.description,
-    duration: `${eventType.lengthInMinutes}m`,
-    price: `$${eventType.price / 100}`,
-    calLink: `https://cal.com/katsuba/${eventType.slug}`,
-  }));
+  const services = (
+    json.data.map((eventType: any) => ({
+      title: eventType.title,
+      description: eventType.description,
+      duration: `${eventType.lengthInMinutes}m`,
+      price: `$${eventType.price / 100}`,
+      rawCost: eventType.price,
+      calLink: `https://cal.com/katsuba/${eventType.slug}`,
+      slug: eventType.slug,
+    })) as {
+      title: string;
+      description: string;
+      duration: string;
+      price: string;
+      rawCost: number;
+      calLink: string;
+      slug: string;
+    }[]
+  ).sort((a, b) => a.rawCost - b.rawCost);
 
   return (
     <>
