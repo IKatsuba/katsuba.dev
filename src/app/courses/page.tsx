@@ -3,37 +3,15 @@ import Image from 'next/image';
 
 import { Card } from '@/components/Card';
 import { SimpleLayout } from '@/components/SimpleLayout';
-import logoSaasfy from '@/images/logos/saasfy.svg';
-import logoMutates from '@/images/logos/mutates.png';
-import logoNx from '@/images/logos/nx.png';
-import logoRspress from '@/images/logos/rspress.png';
-import logoRevelio from '@/images/logos/revelio.jpeg';
+import logoAngular from '@/images/logos/angular.svg';
 
-const projects = [
+const courses = [
   {
-    name: 'Mutates',
+    name: 'UI Kit for Angular',
     description:
-      'Mutates is a library for code mutation. It is a tool for developers to mutate code as they need.',
-    link: { href: 'https://github.com/IKatsuba/mutates', label: 'github.com' },
-    logo: logoMutates,
-  },
-  {
-    name: 'Nx Custom Cache Server',
-    description: 'The Nx Custom Self-Hosted Remote Cache Server',
-    link: { href: 'https://github.com/IKatsuba/nx-cache-server', label: 'github.com' },
-    logo: logoNx,
-  },
-  {
-    name: 'Docio',
-    description: 'Docio is a tool for developers to manage their documentation.',
-    link: { href: 'https://github.com/dociodev/docio', label: 'github.com' },
-    logo: logoRspress,
-  },
-  {
-    name: 'Revelio',
-    description: 'Revelio is a Telegram bot based on generative AI models.',
-    link: { href: 'https://github.com/IKatsuba/revelio', label: 'github.com' },
-    logo: logoRevelio,
+      'Learn how to design, build, and maintain a scalable UI Kit for Angular applications. This course covers design systems, component architecture, theming, accessibility, documentation, and publishing best practices.',
+    link: { href: 'https://ng.guide/ui-kit', label: 'ng.guide' },
+    logo: logoAngular,
   },
 ];
 
@@ -49,29 +27,29 @@ function LinkIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
 }
 
 export const metadata: Metadata = {
-  title: 'Projects',
-  description: 'Things I’ve made trying to put my dent in the universe.',
+  title: 'Courses',
+  description: "Educational resources and courses I've created to help developers learn and grow.",
 };
 
-export default function Projects() {
+export default function Courses() {
   return (
     <SimpleLayout
-      title="Things I’ve made trying to put my dent in the universe."
-      intro="I’ve worked on tons of little projects over the years but these are the ones that I’m most proud of. Many of them are open-source, so if you see something that piques your interest, check out the code and contribute if you have ideas for how it can be improved."
+      title="Educational resources to help you grow as a developer."
+      intro="I create educational content to help developers learn and improve their skills. Here you can find my courses and guides that I've put together based on my experience and knowledge."
     >
       <ul role="list" className="grid grid-cols-1 gap-x-12 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
-        {projects.map((project) => (
-          <Card as="li" key={project.name}>
+        {courses.map((course) => (
+          <Card as="li" key={course.name}>
             <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full bg-white ring-1 shadow-md shadow-zinc-800/5 ring-zinc-900/5 dark:border dark:border-zinc-700/50 dark:bg-zinc-800 dark:ring-0">
-              <Image src={project.logo} alt="" className="h-8 w-8 rounded-full" unoptimized />
+              <Image src={course.logo} alt="" className="h-8 w-8 rounded-full" unoptimized />
             </div>
             <h2 className="mt-6 text-base font-semibold text-zinc-800 dark:text-zinc-100">
-              <Card.Link href={project.link.href}>{project.name}</Card.Link>
+              <Card.Link href={course.link.href}>{course.name}</Card.Link>
             </h2>
-            <Card.Description>{project.description}</Card.Description>
+            <Card.Description>{course.description}</Card.Description>
             <p className="relative z-10 mt-6 flex text-sm font-medium text-zinc-400 transition group-hover:text-teal-500 dark:text-zinc-200">
               <LinkIcon className="h-6 w-6 flex-none" />
-              <span className="ml-2">{project.link.label}</span>
+              <span className="ml-2">{course.link.label}</span>
             </p>
           </Card>
         ))}
