@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import { stripe } from '@/lib/stripe';
 import { sendCheckoutEmail } from '@/emails/send-checkout-email';
 
-const SECRET = process.env.CALCOM_WEBHOOK_SECRET! || 'secret';
+const SECRET = process.env.CALCOM_WEBHOOK_SECRET!;
 
 export async function POST(request: Request) {
   const rawBody = await request.text();
