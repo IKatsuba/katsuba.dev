@@ -51,12 +51,25 @@ export async function POST(request: Request) {
     const price = prices.data[0];
     const quantityLength = parseInt(price.metadata.quantityLength, 10);
 
+    const customers = await stripe.customers.list({
+      email: organizer.email,
+      limit: 1,
+    });
+
+    let customer = customers.data[0];
+
+    if (!customer) {
+      customer = await stripe.customers.create({
+        email: organizer.email,
+      });
+    }
+
     const session = await stripe.checkout.sessions.create({
-      customer_email: organizer.email,
+      customer: customer.id,
       line_items: [{ price: price.id, quantity: Math.max(Math.ceil(length / quantityLength), 1) }],
       mode: 'payment',
       success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/consultations/thank-you`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/consultations/thank-you`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/consultations/payment-cancelled`,
       allow_promotion_codes: true,
       invoice_creation: {
         enabled: true,
