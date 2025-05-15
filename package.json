@@ -10,6 +10,9 @@
   },
   "browserslist": "defaults, not ie <= 11",
   "dependencies": {
+    "@react-email/components": "0.0.33",
+    "@react-email/render": "1.0.5",
+    "@react-email/tailwind": "1.0.4",
     "@headlessui/react": "^2.1.0",
     "@mapbox/rehype-prism": "^0.9.0",
     "@mdx-js/loader": "^3.0.0",
@@ -28,9 +31,11 @@
     "next": "^14.2.24",
     "next-themes": "^0.2.1",
     "react": "^18.2.0",
+    "react-email": "3.0.7",
     "react-dom": "^18.2.0",
     "remark-gfm": "^4.0.0",
     "resend": "^4.1.2",
+    "stripe": "^18.1.0",
     "tailwindcss": "^4.0.6",
     "typescript": "^5.3.3",
     "zod": "^3.24.2"
