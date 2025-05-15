@@ -34,6 +34,37 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ message: 'Booking confirmed' });
       }
+
+      case 'checkout.session.expired': {
+        const session = event.data.object as Stripe.Checkout.Session;
+        const uid = session.metadata?.uid;
+
+        if (!uid) {
+          throw new Error('Missing metadata');
+        }
+
+        const response = await fetch(
+          `${process.env.CALCOM_API_URL || 'https://api.cal.com/v2'}/bookings/${uid}/decline`,
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${process.env.CAL_API_KEY}`,
+              'cal-api-version': '2024-08-13',
+            },
+            body: JSON.stringify({
+              reason: 'Payment expired',
+            }),
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error('Failed to decline booking');
+        }
+
+        console.log(`Booking declined: ${uid}`);
+
+        return NextResponse.json({ message: 'Booking declined' });
+      }
     }
 
     return NextResponse.json({ message: 'Webhook received' });

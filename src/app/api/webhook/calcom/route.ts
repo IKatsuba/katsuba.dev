@@ -64,6 +64,7 @@ export async function POST(request: Request) {
       metadata: {
         uid,
       },
+      expires_at: Math.floor(Date.now() / 1000) + 60 * 60 * 1, // 1 hour
     });
 
     // send email
