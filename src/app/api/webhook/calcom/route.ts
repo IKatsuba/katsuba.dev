@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
-import Stripe from 'stripe';
+import { stripe } from '@/lib/stripe';
+import { sendCheckoutEmail } from '@/emails/send-checkout-email';
 
 const SECRET = process.env.CALCOM_WEBHOOK_SECRET! || 'secret';
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export async function POST(request: Request) {
   const rawBody = await request.text();
@@ -32,12 +31,14 @@ export async function POST(request: Request) {
       type: string;
       organizer: {
         email: string;
+        name: string;
       };
+      length: number;
     };
   };
 
   if (body.triggerEvent === 'BOOKING_REQUESTED') {
-    const { uid, type, organizer } = body.payload;
+    const { uid, type, organizer, length } = body.payload;
 
     const prices = await stripe.prices.list({
       lookup_keys: [type],
@@ -48,7 +49,6 @@ export async function POST(request: Request) {
     }
 
     const price = prices.data[0];
-
     const quantityLength = parseInt(price.metadata.quantityLength, 10);
 
     const session = await stripe.checkout.sessions.create({
@@ -63,12 +63,17 @@ export async function POST(request: Request) {
       },
       metadata: {
         uid,
-        type,
-        length,
       },
     });
 
     // send email
+    await sendCheckoutEmail({
+      name: organizer.name || organizer.email,
+      length,
+      price: (session.amount_total ?? 0) / 100,
+      checkoutUrl: session.url!,
+      recipient: organizer.email,
+    });
   }
 
   return NextResponse.json({ message: 'Webhook received' });

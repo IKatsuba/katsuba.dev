@@ -1,13 +1,11 @@
 'use server';
+import { resend } from '@/lib/resend';
 import { redirect } from 'next/navigation';
-import { Resend } from 'resend';
 import { z } from 'zod';
 
 const formDataSchema = z.object({
   email: z.string().email(),
 });
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function subscribe(formData: FormData) {
   const emailData = formData.get('email');

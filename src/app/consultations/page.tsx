@@ -9,15 +9,18 @@ export const metadata: Metadata = {
 };
 
 export default async function ArticlesIndex() {
-  const response = await fetch('https://api.cal.com/v2/event-types?username=katsuba', {
-    headers: {
-      Authorization: `Bearer ${process.env.CAL_API_KEY}`,
-      'cal-api-version': '2024-06-14',
+  const response = await fetch(
+    `${process.env.CALCOM_API_URL || 'https://api.cal.com/v2'}/event-types?username=katsuba`,
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.CAL_API_KEY}`,
+        'cal-api-version': '2024-06-14',
+      },
+      next: {
+        revalidate: 60 * 60, // 1 hour
+      },
     },
-    next: {
-      revalidate: 60 * 60, // 1 hour
-    },
-  });
+  );
 
   const json = await response.json();
 
@@ -27,7 +30,7 @@ export default async function ArticlesIndex() {
     duration: `${eventType.lengthInMinutes}m`,
     price: `$${eventType.price / 100}`,
     rawCost: eventType.price,
-    calLink: `https://cal.com/katsuba/${eventType.slug}`,
+    calLink: `${process.env.CALCOM_URL || 'https://cal.com'}/katsuba/${eventType.slug}`,
     slug: eventType.slug,
   })) as {
     title: string;

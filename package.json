@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --port 4000",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "stripe:webhook": "stripe --api-key $(dotenvx get STRIPE_SECRET_KEY) listen --forward-to http://localhost:4000/api/webhook/stripe"
   },
   "browserslist": "defaults, not ie <= 11",
   "dependencies": {
