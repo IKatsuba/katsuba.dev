@@ -29,16 +29,18 @@ export async function POST(request: Request) {
     payload: {
       uid: string;
       type: string;
-      organizer: {
+      attendees: {
         email: string;
         name: string;
-      };
+      }[];
       length: number;
     };
   };
 
   if (body.triggerEvent === 'BOOKING_REQUESTED') {
-    const { uid, type, organizer, length } = body.payload;
+    const { uid, type, attendees, length } = body.payload;
+
+    const user = attendees.at(0)!;
 
     const prices = await stripe.prices.list({
       lookup_keys: [type],
@@ -52,7 +54,7 @@ export async function POST(request: Request) {
     const quantityLength = parseInt(price.metadata.quantityLength, 10);
 
     const customers = await stripe.customers.list({
-      email: organizer.email,
+      email: user.email,
       limit: 1,
     });
 
@@ -60,7 +62,7 @@ export async function POST(request: Request) {
 
     if (!customer) {
       customer = await stripe.customers.create({
-        email: organizer.email,
+        email: user.email,
       });
     }
 
@@ -82,11 +84,11 @@ export async function POST(request: Request) {
 
     // send email
     await sendCheckoutEmail({
-      name: organizer.name || organizer.email,
+      name: user.name || user.email,
       length,
       price: (session.amount_total ?? 0) / 100,
       checkoutUrl: session.url!,
-      recipient: organizer.email,
+      recipient: user.email,
     });
   }
 
