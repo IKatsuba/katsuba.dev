@@ -19,6 +19,7 @@ import { type ArticleWithSlug, getAllArticles } from '@/lib/articles';
 import { formatDate } from '@/lib/formatDate';
 import { subscribe } from '@/actions/subscribe';
 import { Booking } from '@/components/Booking';
+import { CVPromo } from '@/components/CVPromo';
 
 function MailIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   return (
@@ -256,40 +257,54 @@ function Photos() {
 export default async function Home() {
   let articles = (await getAllArticles()).slice(0, 4);
 
-  const response = await fetch(
-    `${process.env.CALCOM_API_URL || 'https://api.cal.com/v2'}/event-types?username=katsuba`,
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.CAL_API_KEY}`,
-        'cal-api-version': '2024-06-14',
-      },
-      next: {
-        revalidate: 60 * 60, // 1 hour
-      },
-    },
-  );
+  let services: {
+    title: string;
+    description: string;
+    duration: string;
+    price: string;
+    rawCost: number;
+    calLink: string;
+    slug: string;
+  }[] = [];
 
-  const json = await response.json();
+  try {
+    const response = await fetch(
+      `${process.env.CALCOM_API_URL || 'https://api.cal.com/v2'}/event-types?username=katsuba`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.CAL_API_KEY}`,
+          'cal-api-version': '2024-06-14',
+        },
+        next: {
+          revalidate: 60 * 60, // 1 hour
+        },
+      },
+    );
 
-  const services = (
-    json.data.map((eventType: any) => ({
-      title: eventType.title,
-      description: eventType.description,
-      duration: `${eventType.lengthInMinutes}m`,
-      price: `$${eventType.price / 100}`,
-      rawCost: eventType.price,
-      calLink: `${process.env.CALCOM_URL || 'https://cal.com'}/katsuba/${eventType.slug}`,
-      slug: eventType.slug,
-    })) as {
-      title: string;
-      description: string;
-      duration: string;
-      price: string;
-      rawCost: number;
-      calLink: string;
-      slug: string;
-    }[]
-  ).sort((a, b) => a.rawCost - b.rawCost);
+    const json = await response.json();
+
+    services = (
+      json.data.map((eventType: any) => ({
+        title: eventType.title,
+        description: eventType.description,
+        duration: `${eventType.lengthInMinutes}m`,
+        price: `$${eventType.price / 100}`,
+        rawCost: eventType.price,
+        calLink: `${process.env.CALCOM_URL || 'https://cal.com'}/katsuba/${eventType.slug}`,
+        slug: eventType.slug,
+      })) as {
+        title: string;
+        description: string;
+        duration: string;
+        price: string;
+        rawCost: number;
+        calLink: string;
+        slug: string;
+      }[]
+    ).sort((a, b) => a.rawCost - b.rawCost);
+  } catch (error) {
+    console.error(error);
+  }
 
   return (
     <>
@@ -334,6 +349,7 @@ export default async function Home() {
             ))}
           </div>
           <div className="space-y-10 lg:pl-16 xl:pl-24">
+            <CVPromo />
             <Newsletter />
             <Resume />
           </div>
